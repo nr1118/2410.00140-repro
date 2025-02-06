@@ -9,8 +9,8 @@ from neost.eos import polytropes
 from neost.Prior import Prior
 from neost.Star import Star
 from neost.Likelihood import Likelihood
-from scipy.stats import multivariate_normal, gaussian_kde
 from neost import PosteriorAnalysis
+from scipy.stats import multivariate_normal, gaussian_kde
 import numpy
 import matplotlib
 from scipy.interpolate import UnivariateSpline
@@ -18,7 +18,12 @@ from matplotlib import pyplot
 from pymultinest.solve import solve
 import time
 import os
+from matplotlib.lines import Line2D
+import matplotlib.patches as mpatches
+import seaborn as sns
 import corner as corner
+import getdist
+from getdist import plots
 
 
 # In[ ]:
@@ -38,63 +43,39 @@ eos_name = 'polytropes'
 
 EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler', rho_t = 2e14, adm_type = 'None')
 
-# Here we implement synthetic data based on the future-x scenario with more sources
+# Here we implement old NICER data on J0740 and J0030 from Riley et al.
 
 
-muM = 2.232   #STROBE-X SOURCE
-muR = 11.285
-sigM = muM*0.02   #2% uncertainty
-sigR = muR*0.02 # 2 % uncertainty in radius
-test = multivariate_normal(mean=[muM, muR], cov=[[sigM, 0.0], [0.0, sigR]])
+# PSR J0740+6620 (arXiv: 2105.06980)
+muM = 2.07  
+muR = 12.39
+sigM = 0.07  #published uncertainty
+sigR_plus = 1.30
+sigR_minus = 0.98
+J0740_mr_samples = numpy.load('Riley00740_mr_posterior_samples.npy').T
+J0740_kde = gaussian_kde(J0740_mr_samples)
+
+# PSR J0030+0451(arXiv: 1912.05702)
+muM2 = 1.34 
+muR2 = 12.71
+sigM2 = 0.15 #published uncertainty
+sigR2_plus = 1.13
+sigR2_minus = 1.18
+J0030_mr_samples = numpy.load('Riley0030_mr_posterior_samples.npy').T
+J0030_kde = gaussian_kde(J0030_mr_samples)
 
 
-muM2 = 2.001
-muR2 = 11.557
-sigM2 = muM2*0.02     #2% uncertainty
-sigR2 = muR2*0.02   #2 % uncertainty in radius
-test2 = multivariate_normal(mean=[muM2, muR2], cov=[[sigM2, 0.0], [0.0, sigR2]])
-
-
-muM3 = 1.886   
-muR3 = 11.606
-sigM3 = muM3*0.02   #2% uncertainty in mass
-sigR3 = muR3*0.02 # 2 % uncertainty in radius 
-test3 = multivariate_normal(mean=[muM3, muR3], cov=[[sigM3, 0.0], [0.0, sigR3]])
-
-
-muM4 = 1.636  
-muR4 = 11.647
-sigM4 = muM4*0.02 # 2 % uncerainty in mass 
-sigR4 = muR4*0.02  # 2 % uncertainty in radius 
-test4 = multivariate_normal(mean=[muM4, muR4], cov=[[sigM4, 0.0], [0.0, sigR4]])
-
-
-muM5 = 1.457   
-muR5 = 11.641
-sigM5 = muM5*0.02  # 2% uncertainty
-sigR5 = muR5*0.02  # 2 % uncertainty in radius 
-test5 = multivariate_normal(mean=[muM5, muR5], cov=[[sigM5, 0.0], [0.0, sigR5]])
-
-
-muM6 = 1.263   
-muR6 = 11.616
-sigM6 = muM6*0.02   #2% uncertianty
-sigR6 = muR6*0.02  # 2 % uncertainty in radius 
-test6 = multivariate_normal(mean=[muM6, muR6], cov=[[sigM6, 0.0], [0.0, sigR6]])
-
-
-likelihood_functions = [test.pdf,test2.pdf,test3.pdf,test4.pdf,test5.pdf,test6.pdf]
-likelihood_params = [['Mass', 'Radius'],['Mass','Radius'],['Mass','Radius'],['Mass','Radius'],['Mass','Radius'],['Mass','Radius']]
+likelihood_functions = [J0740_kde.pdf,J0030_kde.pdf]
+likelihood_params = [['Mass', 'Radius'],['Mass','Radius']]
 
 # This is not a GW event so we set chirp mass to None
-chirp_mass = [None,None,None,None,None,None]
+chirp_mass = [None,None]
 number_stars = len(chirp_mass)
 
-run_name = "FUTUREX_NO_ADM_BARYONIC_ONLY_"
+run_name = "NICER_REAL_BARYONIC_"
 
 
 variable_params = {'gamma1':[1., 4.5], 'gamma2':[0., 8.], 'gamma3':[0.5, 8.], 'rho_t1':[1.5, 8.3], 'rho_t2':[1.5, 8.3],'ceft':[EOS.min_norm, EOS.max_norm]}
-
 
 for i in range(number_stars):
 	variable_params.update({'rhoc_' + str(i+1):[14.6, 16]})
@@ -122,20 +103,13 @@ for i in range(len(cube)):
     print(likelihood.call(par))
 print("Testing done")
 
-
-# In[ ]:
-
-
 start = time.time()
 result = solve(LogLikelihood=likelihood.call, Prior=prior.inverse_sample, n_live_points=3000, evidence_tolerance=0.1,
                n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=run_name, verbose=True)
 end = time.time()
 print(end - start)
+# In[ ]:
 
 
 PosteriorAnalysis.compute_minimal_auxiliary_data_Baryonic(run_name, EOS,
                                          variable_params, static_params, chirp_mass)
-
-
-
-

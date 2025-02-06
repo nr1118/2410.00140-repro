@@ -10,7 +10,8 @@ from neost.Prior import Prior
 from neost.Star import Star
 from neost.Likelihood import Likelihood
 from scipy.stats import multivariate_normal, gaussian_kde
-import numpy
+from neost import PosteriorAnalysis
+import numpy as np
 import matplotlib
 from scipy.interpolate import UnivariateSpline
 from matplotlib import pyplot
@@ -36,11 +37,7 @@ eos_name = 'polytropes'
 
 
 EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler', rho_t = 2e14, adm_type = 'Fermionic')
-#EOS.update({'gamma1':2.3, 'gamma2':4., 'gamma3':2.6, 'rho_t1':1.8, 'rho_t2':4.,'mchi':15000, 'gchi_over_mphi':pow(10,-2), 'adm_fraction':1.5, 'ceft':2.6}, max_edsc=True)
 
-
-# EOS.plot()
-# EOS.plot_massradius()
 # Here we implement synthetic data based on the future-x scenario with more sources
 
 
@@ -95,17 +92,16 @@ number_stars = len(chirp_mass)
 
 run_name = "FUTUREX_ADM_VARYING_BARYONIC"
 
-#posterior on mchi is influences such that we don't same mchi < 100 (10^2) see prior corner plots
+#Posterior on mchi is slightly modified from the true prior such that we don't need to sample mchi < 100 (10^2) because according to prior corner plots
+# those are all halos. Therefore, in order to save computational time, we move the lower bound on mchi to 100 MeV.
 variable_params = {'gamma1':[1., 4.5], 'gamma2':[0., 8.], 'gamma3':[0.5, 8.], 'rho_t1':[1.5, 8.3], 'rho_t2':[1.5, 8.3],
                   'mchi':[2, 9],'gchi_over_mphi': [-5,3],'adm_fraction':[0., 1.7],'ceft':[EOS.min_norm, EOS.max_norm]}
-# variable_params.update({'ceft':[EOS.min_norm, EOS.max_norm]})
-#variable_params = {'mchi':[-2, 9],'gchi_over_mphi': [-5,3],'adm_fraction':[0., 1.7]}
+
 for i in range(number_stars):
 	variable_params.update({'rhoc_' + str(i+1):[14.6, 16]})
 
 
 
-#static_params = {'gamma1': 2.3, 'gamma2': 4., 'gamma3': 2.6, 'rho_t1': 1.8, 'rho_t2': 4., 'ceft': 2.6}
 static_params = {}
 # In[ ]:
 
@@ -131,78 +127,14 @@ print("Testing done")
 
 
 start = time.time()
-result = solve(LogLikelihood=likelihood.call, Prior=prior.inverse_sample, n_live_points=2000, evidence_tolerance=0.1,
+result = solve(LogLikelihood=likelihood.call, Prior=prior.inverse_sample, n_live_points=3000, evidence_tolerance=0.1,
                n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=run_name, verbose=True)
 end = time.time()
 print(end - start)
 
-ewposterior = numpy.loadtxt(run_name +'post_equal_weights.dat')
-scattered = []
+print('Solving done, moving to Prior Analysis')
 
-for i in range(0, len(ewposterior), 1):
-    pr = ewposterior[i][0:len(variable_params)]
-    par = {e:pr[j] for j, e in enumerate(list(variable_params.keys()))}
-    par.update(static_params)
-    print(i)
-    EOS.update(par, max_edsc=True)
-
-    x = numpy.random.random()
-    rhoc_EOS = x*(numpy.log10(EOS.max_edsc)-14.6)+14.6    
-     
-    rhocpar = 10**rhoc_EOS
-
-    epscent_dm = EOS.find_epsdm_cent(par['adm_fraction'],rhocpar)
-    star = Star(rhocpar,epscent_dm)
-    # star.solve_structure(tabulated_example.energydensities, tabulated_example.pressures)
-    star.solve_structure(EOS.energydensities, EOS.pressures,
-                             EOS.energydensities_dm, EOS.pressures_dm) 
-                             #ADM_fraction=par['adm_fraction'], mchi=par['mchi'], gchi_over_mphi=par['gchi_over_mphi'])
-        
-    scattered.append([rhocpar, EOS.eos(rhocpar), star.Mgrav, star.Req,star.tidal,star.Rdm_halo]) ## if Rdm_halo == 999 then we have a halo if Rdm_halo ==0 then we have a core
-
-
-
-       
- 
-
-scattered = numpy.array(scattered)
-    
-
-
-#print(scattered)
-numpy.savetxt(run_name + 'scattered.txt', scattered)
-
-scattered = []
-
-for i in range(0, len(ewposterior), 1):
-    pr = ewposterior[i][0:len(variable_params)]
-    par = {e:pr[j] for j, e in enumerate(list(variable_params.keys()))}
-    par.update(static_params)
-    print(i)
-    EOS.update(par, max_edsc=True)
-
-    tmp = []
-    
-    for j in range(number_stars):
-        rhocpar = 10**par['rhoc_' + str(j+1)] 
-
-        epscent_dm = EOS.find_epsdm_cent(par['adm_fraction'],rhocpar)
-        star = Star(rhocpar,epscent_dm)
-    # star.solve_structure(tabulated_example.energydensities, tabulated_example.pressures)
-        star.solve_structure(EOS.energydensities, EOS.pressures,
-                                EOS.energydensities_dm, EOS.pressures_dm) 
-                             #ADM_fraction=par['adm_fraction'], mchi=par['mchi'], gchi_over_mphi=par['gchi_over_mphi'])
-        
-        tmp.append([rhocpar, EOS.eos(rhocpar), star.Mgrav, star.Req,star.tidal,star.Rdm_halo]) ## if Rdm_halo == 999 then we have a halo if Rdm_halo ==0 then we have a core
-        
-    scattered.append(tmp[0])
-
-
-
-       
-scattered = numpy.array(scattered)
-numpy.savetxt(run_name + 'rhoc_scattered.txt', scattered)
-print("Testing done")
+PosteriorAnalysis.compute_minimal_auxiliary_data_ADM(run_name, EOS, variable_params, static_params, prior = False)
 
 
 
