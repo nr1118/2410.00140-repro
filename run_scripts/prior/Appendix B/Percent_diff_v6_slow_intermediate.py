@@ -52,7 +52,7 @@ def Radial_diff(eos1,eos2,mchi,fchi,num_stars):
     central_densities = numpy.logspace(14.87, numpy.log10(eos1.max_edsc), num_stars)
     
     
-    relcent_diff40 = []
+    relcent_diff = []
 
     #Including a weight with each value will ensure that all halos have no influence on the average, thus they are effectivley dropped in our calculation!
     Weights = []
@@ -63,17 +63,13 @@ def Radial_diff(eos1,eos2,mchi,fchi,num_stars):
 
         eps_centdm_4 = eos2.find_epsdm_cent(eos2.adm_fraction,e)
         Mass_4,Radius_4 = eos2.Mass_Radius(e,eps_centdm_4)
-        #print(Radius_0,Radius_4)
 
 
         if Radius_0!=0 and Radius_4!=0: #(Testing for an ADM core because if there is an ADM halo then R_star = 0)
             if Mass_0 >=1. and Mass_4 >=1.:
-                #Calculating the relative change is done by checking if Mass_0 and Mass_4 match out to the 2nd, 3rd, and 4th decmial places. However, this method is not perfect because it has throw out masses 
-                #like Mass_0 = 1.663 Mass_4 = 1.665, which could be treated as the same mass since they differ by 0.0025 solar mass (~0.1%). So, I placed an additional condition that checks
-                #if their differences are less than or equal to 0.002. 
                 if numpy.round(Mass_0,2)==numpy.round(Mass_4,2) or numpy.round(Mass_0,3)==numpy.round(Mass_4,3) or numpy.round(Mass_0,4)==numpy.round(Mass_4,4):
-                    #relative percent difference between 10^-4 and 0. Where we find the change relative to 0.
-                    relcent_diff40.append(abs(rel_diff(Radius_0,Radius_4)))
+                    #relative percent difference between 10^-5 and 0. Where we find the change relative to 0.
+                    relcent_diff.append(abs(rel_diff(Radius_0,Radius_4)))
                     Weights.append(1)
 
                 else: 
@@ -85,9 +81,9 @@ def Radial_diff(eos1,eos2,mchi,fchi,num_stars):
             relcent_diff40.append(999) #Flag for the halos
             Weights.append(0)
                   
-    avg_relcent_diff40 = numpy.average(relcent_diff40,weights = Weights)
+    avg_relcent_diff = numpy.average(relcent_diff,weights = Weights)
 
-    return avg_relcent_diff40
+    return avg_relcent_diff
     
     
 
@@ -96,14 +92,14 @@ def Radial_diff(eos1,eos2,mchi,fchi,num_stars):
 
 
 #It appears that you may not need this function here due to numpy.meshgrid?
-def fchi_relcent_diff40_array(func,eos1,eos2,mchi,fchi,num_stars):
+def fchi_relcent_diff_array(func,eos1,eos2,mchi,fchi,num_stars):
 
-    relcent_diff40 = func(eos1,eos2,mchi,fchi,num_stars)
+    relcent_diff = func(eos1,eos2,mchi,fchi,num_stars)
     #Always need to define an fchi_array if we want to sample all of mchi such that we get an ADM core
-    fchi_arr = numpy.repeat(fchi,len(relcent_diff40))
+    fchi_arr = numpy.repeat(fchi,len(relcent_diff))
     
     #This gives arrays that look like this [[fchi of all the same value] [relcent_diff40 corresponding to fchi]]
-    Array = numpy.column_stack((fchi_arr,relcent_diff40)).T 
+    Array = numpy.column_stack((fchi_arr,relcent_diff)).T 
 
     return Array
 
@@ -114,8 +110,8 @@ def fchi_relcent_diff40_array(func,eos1,eos2,mchi,fchi,num_stars):
 #EOS_0 corresponds the EOS with gchi_over_mphi = 0
 EOS_0 = polytropes.PolytropicEoS(crust='ceft-Hebeler', rho_t=2e14,adm_type = 'Fermionic')
 
-#EOS_4 corresponds to the EOS with gchi_over_mphi = 10^-4
-EOS_4 = polytropes.PolytropicEoS(crust='ceft-Hebeler', rho_t=2e14,adm_type = 'Fermionic')
+#EOS_5 corresponds to the EOS with gchi_over_mphi = 10^-5
+EOS_5 = polytropes.PolytropicEoS(crust='ceft-Hebeler', rho_t=2e14,adm_type = 'Fermionic')
 
 
 # In[ ]:
@@ -143,39 +139,26 @@ fchi_num_steps = int(fchi_num_steps)+1
 fchi_array = numpy.linspace(fchi_start,fchi_end,fchi_num_steps)
 
 
-# In[ ]:
-
-
 num_stars = 50
 
 Array = numpy.zeros((len(mchi_array),len(fchi_array)))      
    
 for i,mchi in enumerate(mchi_array):
     for j,fchi in enumerate(fchi_array):
-        avg_reldiff = Radial_diff(EOS_0,EOS_4,mchi,fchi,num_stars)
+        avg_reldiff = Radial_diff(EOS_0,EOS_5,mchi,fchi,num_stars)
         Array[i,j] = avg_reldiff
         
            
-
-
-# In[ ]:
-
-
-
 end = time.time()
 print(numpy.shape(Array))
 print(Array)
 data = pd.DataFrame(Array.flatten())
-numpy.save('Relcent_diff40_intermediately_stiff_baryonic.npy',Array)
+numpy.save('Relcent_diff_intermediately_stiff_baryonic.npy',Array)
 print('The average of the relative percent differences is = '+str(numpy.average(Array.flatten())))
 print('The max relative percent difference is = '+str(max(Array.flatten())), 'The min relative percent difference is = '+str(min(Array.flatten())))
 print('The mode of the relative percent differences is = '+str(data.mode()))
 print('The median of the relative percent differences is = ' +str(numpy.median(Array.flatten())))
 print("Execution time of the MR is: " + str(end-start))
-
-
-# In[ ]:
-
 
 
 fig, ax = pyplot.subplots(1,1, figsize=(14,5))
@@ -184,7 +167,7 @@ X, Y = numpy.meshgrid(mchi_array, fchi_array)
 #cbar_mass = fig.colorbar(pos, ax=ax[0])
 #cbar_mass.set_label('$M_{NS} \, (M_\odot)$')
 pos1 = ax.pcolormesh(X, Y, Array.T,shading ='gouraud',cmap='viridis') #shading ='gouraud' used for pcolormesh
-pos1.set_clim(0,0.008)
+pos1.set_clim(0,0.004)
 cbar = fig.colorbar(pos1, ax=ax)
 cbar.set_label('Relative Percent Diff',rotation = 270,labelpad = 10)
 ax.set_title('Intermediately Stiff EoS')
