@@ -17,6 +17,9 @@ import timeit
 import time
 import pandas as pd
 
+
+from tqdm import tqdm
+
 from joblib import Parallel, delayed
 import itertools
 import neost.global_imports as global_imports
@@ -61,24 +64,24 @@ def Radial_diff(eos1,eos2,mchi,fchi,num_stars):
         eps_centdm_0 = eos1.find_epsdm_cent(eos1.adm_fraction,e)
         Mass_0,Radius_0 = eos1.Mass_Radius(e,eps_centdm_0)
 
-        eps_centdm_4 = eos2.find_epsdm_cent(eos2.adm_fraction,e)
-        Mass_4,Radius_4 = eos2.Mass_Radius(e,eps_centdm_4)
+        eps_centdm_5 = eos2.find_epsdm_cent(eos2.adm_fraction,e)
+        Mass_5,Radius_5 = eos2.Mass_Radius(e,eps_centdm_5)
 
 
-        if Radius_0!=0 and Radius_4!=0: #(Testing for an ADM core because if there is an ADM halo then R_star = 0)
-            if Mass_0 >=1. and Mass_4 >=1.:
-                if numpy.round(Mass_0,2)==numpy.round(Mass_4,2) or numpy.round(Mass_0,3)==numpy.round(Mass_4,3) or numpy.round(Mass_0,4)==numpy.round(Mass_4,4):
+        if Radius_0!=0 and Radius_5!=0: #(Testing for an ADM core because if there is an ADM halo then R_star = 0)
+            if Mass_0 >=1. and Mass_5 >=1.:
+                if numpy.round(Mass_0,2)==numpy.round(Mass_5,2) or numpy.round(Mass_0,3)==numpy.round(Mass_5,3) or numpy.round(Mass_0,4)==numpy.round(Mass_5,4):
                     #relative percent difference between 10^-5 and 0. Where we find the change relative to 0.
-                    relcent_diff.append(abs(rel_diff(Radius_0,Radius_4)))
+                    relcent_diff.append(abs(rel_diff(Radius_0,Radius_5)))
                     Weights.append(1)
 
                 else: 
                     print('The masses do not match')
-                    print(Mass_0,Mass_4)
-                    print(abs(rel_diff(Mass_0,Mass_4)))
+                    print(Mass_0,Mass_5)
+                    print(abs(rel_diff(Mass_0,Mass_5)))
 
         else: 
-            relcent_diff40.append(999) #Flag for the halos
+            relcent_diff.append(999) #Flag for the halos
             Weights.append(0)
                   
     avg_relcent_diff = numpy.average(relcent_diff,weights = Weights)
@@ -143,7 +146,7 @@ num_stars = 50
 
 Array = numpy.zeros((len(mchi_array),len(fchi_array)))      
    
-for i,mchi in enumerate(mchi_array):
+for i,mchi in tqdm(enumerate(mchi_array)):
     for j,fchi in enumerate(fchi_array):
         avg_reldiff = Radial_diff(EOS_0,EOS_5,mchi,fchi,num_stars)
         Array[i,j] = avg_reldiff
