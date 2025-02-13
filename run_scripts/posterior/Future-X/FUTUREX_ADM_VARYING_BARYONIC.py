@@ -1,28 +1,17 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
 
 import neost
 from neost.eos import polytropes
 from neost.Prior import Prior
 from neost.Star import Star
 from neost.Likelihood import Likelihood
-from scipy.stats import multivariate_normal, gaussian_kde
+from scipy.stats import multivariate_normal
 from neost import PosteriorAnalysis
 import numpy as np
-import matplotlib
-from scipy.interpolate import UnivariateSpline
-from matplotlib import pyplot
+
 from pymultinest.solve import solve
 import time
-import os
+
 import corner as corner
-
-
-# In[ ]:
-
 
 import neost.global_imports as global_imports
 
@@ -36,7 +25,7 @@ rho_ns = global_imports._rhons
 eos_name = 'polytropes'
 
 
-EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler', rho_t = 2e14, adm_type = 'Fermionic')
+EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler',rho_t = 2e14, adm_type = 'Fermionic')
 
 # Here we implement synthetic data based on the future-x scenario with more sources
 
@@ -90,10 +79,10 @@ likelihood_params = [['Mass', 'Radius'],['Mass','Radius'],['Mass','Radius'],['Ma
 chirp_mass = [None,None,None,None,None,None]
 number_stars = len(chirp_mass)
 
-run_name = "FUTUREX_ADM_VARYING_BARYONIC"
+run_name = "FUTUREX_ADM_VARYING_BARYONIC_"
 
 #Posterior on mchi is slightly modified from the true prior such that we don't need to sample mchi < 100 (10^2) because according to prior corner plots
-# those are all halos. Therefore, in order to save computational time, we move the lower bound on mchi to 100 MeV.
+# those are all halos. Therefore, in order to save computational resources, we move the lower bound on mchi to 100 MeV.
 variable_params = {'gamma1':[1., 4.5], 'gamma2':[0., 8.], 'gamma3':[0.5, 8.], 'rho_t1':[1.5, 8.3], 'rho_t2':[1.5, 8.3],
                   'mchi':[2, 9],'gchi_over_mphi': [-5,3],'adm_fraction':[0., 1.7],'ceft':[EOS.min_norm, EOS.max_norm]}
 

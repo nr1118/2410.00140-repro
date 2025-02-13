@@ -10,20 +10,13 @@ from neost.Prior import Prior
 from neost.Star import Star
 from neost.Likelihood import Likelihood
 from neost import PosteriorAnalysis
-from scipy.stats import multivariate_normal, gaussian_kde
-import numpy
-import matplotlib
-from scipy.interpolate import UnivariateSpline
-from matplotlib import pyplot
+from scipy.stats import gaussian_kde
+import numpy as np
 from pymultinest.solve import solve
 import time
-import os
-from matplotlib.lines import Line2D
-import matplotlib.patches as mpatches
 import seaborn as sns
 import corner as corner
-import getdist
-from getdist import plots
+
 
 
 # In[ ]:
@@ -41,7 +34,7 @@ rho_ns = global_imports._rhons
 eos_name = 'polytropes'
 
 
-EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler', rho_t = 2e14, adm_type = 'None')
+EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler',rho_t = 2e14, adm_type = 'None')
 
 # Here we implement old NICER data on J0740 and J0030 from Riley et al.
 
@@ -52,7 +45,7 @@ muR = 12.39
 sigM = 0.07  #published uncertainty
 sigR_plus = 1.30
 sigR_minus = 0.98
-J0740_mr_samples = numpy.load('Riley00740_mr_posterior_samples.npy').T
+J0740_mr_samples = np.load('Riley00740_mr_posterior_samples.npy').T
 J0740_kde = gaussian_kde(J0740_mr_samples)
 
 # PSR J0030+0451(arXiv: 1912.05702)
@@ -61,7 +54,7 @@ muR2 = 12.71
 sigM2 = 0.15 #published uncertainty
 sigR2_plus = 1.13
 sigR2_minus = 1.18
-J0030_mr_samples = numpy.load('Riley0030_mr_posterior_samples.npy').T
+J0030_mr_samples = np.load('Riley0030_mr_posterior_samples.npy').T
 J0030_kde = gaussian_kde(J0030_mr_samples)
 
 
@@ -97,7 +90,7 @@ print("number of parameters is %d" %len(variable_params))
 
 ## TESTING ##
 print("Testing prior and likelihood")
-cube = numpy.random.rand(50, len(variable_params))
+cube = np.random.rand(50, len(variable_params))
 for i in range(len(cube)):
     par = prior.inverse_sample(cube[i])
     print(likelihood.call(par))

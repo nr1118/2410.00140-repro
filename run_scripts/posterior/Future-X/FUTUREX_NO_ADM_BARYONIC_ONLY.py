@@ -9,15 +9,11 @@ from neost.eos import polytropes
 from neost.Prior import Prior
 from neost.Star import Star
 from neost.Likelihood import Likelihood
-from scipy.stats import multivariate_normal, gaussian_kde
+from scipy.stats import multivariate_normal
 from neost import PosteriorAnalysis
-import numpy
-import matplotlib
-from scipy.interpolate import UnivariateSpline
-from matplotlib import pyplot
+import numpy as np
 from pymultinest.solve import solve
 import time
-import os
 import corner as corner
 
 
@@ -36,7 +32,7 @@ rho_ns = global_imports._rhons
 eos_name = 'polytropes'
 
 
-EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler', rho_t = 2e14, adm_type = 'None')
+EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler',rho_t = 2e14, adm_type = 'None')
 
 # Here we implement synthetic data based on the future-x scenario with more sources
 
@@ -116,7 +112,7 @@ print("number of parameters is %d" %len(variable_params))
 
 ## TESTING ##
 print("Testing prior and likelihood")
-cube = numpy.random.rand(50, len(variable_params))
+cube = np.random.rand(50, len(variable_params))
 for i in range(len(cube)):
     par = prior.inverse_sample(cube[i])
     print(likelihood.call(par))

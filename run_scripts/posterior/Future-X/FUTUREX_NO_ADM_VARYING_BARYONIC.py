@@ -10,14 +10,10 @@ from neost.Prior import Prior
 from neost.Star import Star
 from neost.Likelihood import Likelihood
 from neost import PosteriorAnalysis
-from scipy.stats import multivariate_normal, gaussian_kde
-import numpy
-import matplotlib
-from scipy.interpolate import UnivariateSpline
-from matplotlib import pyplot
+from scipy.stats import multivariate_normal
+import numpy as np
 from pymultinest.solve import solve
 import time
-import os
 import corner as corner
 
 
@@ -36,7 +32,7 @@ rho_ns = global_imports._rhons
 eos_name = 'polytropes'
 
 
-EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler', rho_t = 2e14, adm_type = 'Fermionic')
+EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler', rho_t = 2e14,adm_type = 'Fermionic')
 
 # Here we implement synthetic data based on the future-x scenario with more sources
 
@@ -90,7 +86,7 @@ likelihood_params = [['Mass', 'Radius'],['Mass','Radius'],['Mass','Radius'],['Ma
 chirp_mass = [None,None,None,None,None,None]
 number_stars = len(chirp_mass)
 
-run_name = "FUTUREX_ADM_VARYING_BARYONIC"
+run_name = "FUTUREX_ADM_VARYING_BARYONIC_"
 
 #Posterior on mchi is slightly modified from the true prior such that we don't need to sample mchi < 100 (10^2) because according to prior corner plots
 # those are all halos. Therefore, in order to save computational time, we move the lower bound on mchi to 100 MeV.
@@ -118,7 +114,7 @@ print("number of parameters is %d" %len(variable_params))
 
 ## TESTING ##
 print("Testing prior and likelihood")
-cube = numpy.random.rand(50, len(variable_params))
+cube = np.random.rand(50, len(variable_params))
 for i in range(len(cube)):
     par = prior.inverse_sample(cube[i])
     print(likelihood.call(par))
