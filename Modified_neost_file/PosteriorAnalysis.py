@@ -457,16 +457,10 @@ def compute_minimal_auxiliary_data_ADM(root_name, EOS, variable_params, static_p
     print("Total number of samples is %d" %(len(ewprior)))
 
 
-    #More points are added to account for larger energy density spread from ADM
-    #total ADM [1e12,1e18] + baryonic energy densities [1e14.2,1e16]
-    energydensities_b = np.logspace(14.2, 16, 200)
-    energydensities_dm = np.logspace(12, 18, 200)
-    energydensities = energydensities_b + energydensities_dm
+    energydensities = np.logspace(14.2, 16, 50)
 
     MR_prpr_pp = np.zeros((len(ewprior), 2))
 
-    pressures = np.zeros((len(energydensities), len(ewprior)))
-    pressures_dm = np.zeros((len(energydensities), len(ewprior)))
     pressures_b = np.zeros((len(energydensities), len(ewprior)))
 
 
@@ -479,30 +473,8 @@ def compute_minimal_auxiliary_data_ADM(root_name, EOS, variable_params, static_p
         EOS.update(par, max_edsc=True)
 
 
-        pressures_b[:,i][energydensities_b<EOS.max_edsc] = EOS.eos(energydensities_b[energydensities_b<EOS.max_edsc])
+        pressures_b[:,i][energydensities<EOS.max_edsc] = EOS.eos(energydensities[energydensities<EOS.max_edsc])
 
-
-        eos_dm = UnivariateSpline(EOS.energydensities_dm, EOS.pressures_dm, k=1, s=0, ext = 1)
-
-        max_edsc_dm = EOS.find_epsdm_cent(EOS.adm_fraction,EOS.max_edsc)
-
-        if EOS.reach_fraction == False:
-            max_edsc_dm = 0.0
-
-
-        max_edsc_admixed = EOS.max_edsc + max_edsc_dm
-
-        dm_pres_eps = eos_dm(energydensities_dm[energydensities_dm<max_edsc_dm])
-
-        if len(dm_pres_eps) != 0:
-            pressures_dm[:,i][energydensities_dm<max_edsc_dm] = dm_pres_eps
-            dm_pres_eps_interp = UnivariateSpline(energydensities_dm[energydensities_dm<max_edsc_dm], dm_pres_eps, k=1, s=0, ext = 1)
-
-            #Only want to see impact of ADM where we have baryonic central energy densities
-            pressures[:,i][energydensities_b<EOS.max_edsc] = pressures_b[:,i][energydensities_b<EOS.max_edsc] + dm_pres_eps_interp(energydensities_b[energydensities_b<EOS.max_edsc])
-
-        else:
-            pressures[:,i][energydensities_b<EOS.max_edsc] = pressures_b[:,i][energydensities_b<EOS.max_edsc]
 
         if prior is False:
             rhoc = np.random.rand() *(np.log10(EOS.max_edsc) - 14.6) + 14.6
@@ -532,23 +504,14 @@ def compute_minimal_auxiliary_data_ADM(root_name, EOS, variable_params, static_p
     MR_prpr_pp = MR_prpr_pp[MR_prpr_pp[:,1] != 0]
 
     # save everything
-    np.save(root_name + 'pressures', pressures)
+    np.save(root_name + 'pressures', pressures_b)
     np.savetxt(root_name + 'MR_prpr.txt', MR_prpr_pp)
 
-    np.save(root_name + 'pressures_baryon', pressures_b)
-    np.save(root_name + 'pressures_dm', pressures_dm)
 
-    minpres, maxpres = calc_bands(energydensities_b, pressures)
+
+    minpres, maxpres = calc_bands(energydensities, pressures_b)
     np.save(root_name + 'minpres', minpres)
     np.save(root_name + 'maxpres', maxpres)
-
-    minpres_b, maxpres_b = calc_bands(energydensities_b, pressures_b)
-    np.save(root_name + 'minpres_baryon', minpres_b)
-    np.save(root_name + 'maxpres_baryon', maxpres_b)
-
-    minpres_dm, maxpres_dm = calc_bands(energydensities_dm, pressures_dm)
-    np.save(root_name + 'minpres_dm', minpres_dm)
-    np.save(root_name + 'maxpres_dm', maxpres_dm)
 
 
 
