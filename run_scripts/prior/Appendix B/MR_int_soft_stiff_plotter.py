@@ -56,9 +56,7 @@ for i in range(len(gamma1)):
     
 
 
-results_directory = '../../../repro/{run_name}/' 
-
-pathlib.Path(results_directory).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+plots_directory = '../../../plots/'
 
 plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 plt.rc('text', usetex=True)
@@ -86,7 +84,7 @@ for axis in ['top', 'bottom', 'left', 'right']:
     ax.spines[axis].set_linewidth(1.5)
 pyplot.tight_layout()
 pyplot.show()
-pyplot.savefig(results_directory + 'MR_fixed.png')
+pyplot.savefig(plots_directory + 'MR_fixed.png')
 
 
 

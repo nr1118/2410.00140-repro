@@ -147,6 +147,8 @@ print("Execution time of the MR is: " + str(end-start))
 
 
 
+plots_directory = '../../../plots/'
+
 plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 plt.rc('text', usetex=True)
 
@@ -166,13 +168,15 @@ pyplot.rcParams['xtick.top'] = True
 fig, ax = pyplot.subplots(1,1, figsize=(14,5))
 X, Y = numpy.meshgrid(mchi_array, fchi_array)
 pos1 = ax.pcolormesh(X, Y, Array.T,shading ='gouraud',cmap='viridis') #shading ='gouraud' used for pcolormesh
-pos1.set_clim(0,0.004)
-cbar = fig.colorbar(pos1, ax=ax)
-cbar.set_label('Relative Percent Diff',rotation = 270,labelpad = 10)
-ax.set_title('Intermediately Stiff EoS')
-ax.set_ylabel('$F_\chi \, (\%)$')
-ax.set_xlabel('$m_\chi \, (MeV)$')
-pyplot.savefig(results_directory + 'Percent_diff_intermediate_stiff_plot.png')
+pos1.set_clim(0.0,.004)
+cbar = fig.colorbar(pos1, ax=ax,ticks = [0.,.001,.002,.003,.004])
+cbar.set_label('RRPD [$\%$]',rotation = 90,labelpad = 25,fontsize=24)
+cbar.ax.tick_params(labelsize=22)
+ax.set_ylabel('F$_\chi \, [\%]$',fontsize=28)
+ax.set_xlabel('m$_\chi \, [\mathrm{MeV}]$',fontsize=28)
+ax.tick_params(axis='both', which='major', labelsize=22)
+ax.set_title('Intermediately Stiff EoS',fontsize = 24)
+pyplot.savefig(plots_directory + 'Percent_diff_intermediate_stiff_plot.png')
 pyplot.show()
 
 
