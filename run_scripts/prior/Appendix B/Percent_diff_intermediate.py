@@ -6,22 +6,16 @@
 
 import neost
 from neost.eos import polytropes
-from neost.Prior import Prior
 from neost.Star import Star
-from neost.Likelihood import Likelihood
-from scipy.stats import multivariate_normal
 import numpy
-import matplotlib
+import matplotlib as plt
 from matplotlib import pyplot
-import timeit
 import time
 import pandas as pd
-
-
 from tqdm import tqdm
+import pathlib
 
-from joblib import Parallel, delayed
-import itertools
+
 import neost.global_imports as global_imports
 
 c = global_imports._c
@@ -32,7 +26,7 @@ rho_ns = global_imports._rhons
 
 
 # In[ ]:
-
+run_name = 'Percent_diff_intermediate'
 
 def rel_diff(x,y): #really this is the relative percent difference, where we are finding the relative change to x
     return (y-x)/x*100
@@ -88,26 +82,6 @@ def Radial_diff(eos1,eos2,mchi,fchi,num_stars):
 
     return avg_relcent_diff
     
-    
-
-
-# In[ ]:
-
-
-#It appears that you may not need this function here due to numpy.meshgrid?
-def fchi_relcent_diff_array(func,eos1,eos2,mchi,fchi,num_stars):
-
-    relcent_diff = func(eos1,eos2,mchi,fchi,num_stars)
-    #Always need to define an fchi_array if we want to sample all of mchi such that we get an ADM core
-    fchi_arr = numpy.repeat(fchi,len(relcent_diff))
-    
-    #This gives arrays that look like this [[fchi of all the same value] [relcent_diff40 corresponding to fchi]]
-    Array = numpy.column_stack((fchi_arr,relcent_diff)).T 
-
-    return Array
-
-
-# In[ ]:
 
 
 #EOS_0 corresponds the EOS with gchi_over_mphi = 0
@@ -156,7 +130,15 @@ end = time.time()
 print(numpy.shape(Array))
 print(Array)
 data = pd.DataFrame(Array.flatten())
-numpy.save('Relcent_diff_intermediately_stiff_baryonic.npy',Array)
+
+
+
+results_directory = '../../../repro/{run_name}/' 
+
+pathlib.Path(results_directory).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
+
+
+numpy.save(results_directory + 'Relcent_diff_intermediately_stiff_baryonic.npy',Array)
 print('The average of the relative percent differences is = '+str(numpy.average(Array.flatten())))
 print('The max relative percent difference is = '+str(max(Array.flatten())), 'The min relative percent difference is = '+str(min(Array.flatten())))
 print('The mode of the relative percent differences is = '+str(data.mode()))
@@ -166,9 +148,6 @@ print("Execution time of the MR is: " + str(end-start))
 
 fig, ax = pyplot.subplots(1,1, figsize=(14,5))
 X, Y = numpy.meshgrid(mchi_array, fchi_array)
-#pos = ax[0].pcolormesh(numpy.log10(X), Y, maxmass.T, cmap='Reds')
-#cbar_mass = fig.colorbar(pos, ax=ax[0])
-#cbar_mass.set_label('$M_{NS} \, (M_\odot)$')
 pos1 = ax.pcolormesh(X, Y, Array.T,shading ='gouraud',cmap='viridis') #shading ='gouraud' used for pcolormesh
 pos1.set_clim(0,0.004)
 cbar = fig.colorbar(pos1, ax=ax)
@@ -176,7 +155,7 @@ cbar.set_label('Relative Percent Diff',rotation = 270,labelpad = 10)
 ax.set_title('Intermediately Stiff EoS')
 ax.set_ylabel('$F_\chi \, (\%)$')
 ax.set_xlabel('$m_\chi \, (MeV)$')
-pyplot.savefig('Percent_diff_intermediate_stiff_plot.png')
+pyplot.savefig(results_directory + 'Percent_diff_intermediate_stiff_plot.png')
 pyplot.show()
 
 

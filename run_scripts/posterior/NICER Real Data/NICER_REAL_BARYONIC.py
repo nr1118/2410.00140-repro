@@ -16,7 +16,7 @@ from pymultinest.solve import solve
 import time
 import seaborn as sns
 import corner as corner
-
+import pathlib
 
 
 # In[ ]:
@@ -59,7 +59,7 @@ sigR2_minus = 1.18
 J0030_mr_samples = np.load(data_path + 'Riley0030_mr_posterior_samples.npy').T
 J0030_kde = gaussian_kde(J0030_mr_samples)
 
-print('yes worked')
+
 likelihood_functions = [J0740_kde.pdf,J0030_kde.pdf]
 likelihood_params = [['Mass', 'Radius'],['Mass','Radius']]
 
@@ -99,14 +99,17 @@ for i in range(len(cube)):
 print("Testing done")
 
 
+results_directory = '../../../repro/{run_name}/'
+
+pathlib.Path(results_directory).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
 
 start = time.time()
 result = solve(LogLikelihood=likelihood.call, Prior=prior.inverse_sample, n_live_points=3000, evidence_tolerance=0.1,
-               n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename='output/' + run_name, verbose=True)
+               n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=results_directory + run_name, verbose=True)
 end = time.time()
 print(end - start)
 # In[ ]:
 
 
-PosteriorAnalysis.compute_minimal_auxiliary_data_Baryonic('output/' + run_name, EOS,
+PosteriorAnalysis.compute_minimal_auxiliary_data_Baryonic(results_directory + run_name, EOS,
                                          variable_params, static_params, chirp_mass)
