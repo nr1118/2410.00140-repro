@@ -154,7 +154,20 @@ print("Execution time of the MR is: " + str(end-start))
 
 # In[ ]:
 
+plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+plt.rc('text', usetex=True)
 
+pyplot.rc('text', usetex=True)
+pyplot.rc('font', family='serif')
+
+pyplot.rcParams['xtick.direction'] = 'in'
+pyplot.rcParams['xtick.minor.visible'] = True
+pyplot.rcParams['ytick.direction'] = 'in'
+pyplot.rcParams['ytick.minor.visible'] = True
+pyplot.rcParams['xtick.major.size'] = 5
+pyplot.rcParams['ytick.major.size'] = 5
+pyplot.rcParams['ytick.right'] = True
+pyplot.rcParams['xtick.top'] = True   
 
 fig, ax = pyplot.subplots(1,1, figsize=(14,5))
 X, Y = numpy.meshgrid(mchi_array, fchi_array)
