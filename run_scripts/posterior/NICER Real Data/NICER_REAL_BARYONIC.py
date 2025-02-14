@@ -33,6 +33,8 @@ rho_ns = global_imports._rhons
 
 eos_name = 'polytropes'
 
+data_path = '../../../data/'
+
 
 EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler',rho_t = 2e14, adm_type = 'None')
 
@@ -45,7 +47,7 @@ muR = 12.39
 sigM = 0.07  #published uncertainty
 sigR_plus = 1.30
 sigR_minus = 0.98
-J0740_mr_samples = np.load('Riley00740_mr_posterior_samples.npy').T
+J0740_mr_samples = np.load(data_path + 'Riley00740_mr_posterior_samples.npy').T
 J0740_kde = gaussian_kde(J0740_mr_samples)
 
 # PSR J0030+0451(arXiv: 1912.05702)
@@ -54,10 +56,10 @@ muR2 = 12.71
 sigM2 = 0.15 #published uncertainty
 sigR2_plus = 1.13
 sigR2_minus = 1.18
-J0030_mr_samples = np.load('Riley0030_mr_posterior_samples.npy').T
+J0030_mr_samples = np.load(data_path + 'Riley0030_mr_posterior_samples.npy').T
 J0030_kde = gaussian_kde(J0030_mr_samples)
 
-
+print('yes worked')
 likelihood_functions = [J0740_kde.pdf,J0030_kde.pdf]
 likelihood_params = [['Mass', 'Radius'],['Mass','Radius']]
 
@@ -96,13 +98,15 @@ for i in range(len(cube)):
     print(likelihood.call(par))
 print("Testing done")
 
+
+
 start = time.time()
 result = solve(LogLikelihood=likelihood.call, Prior=prior.inverse_sample, n_live_points=3000, evidence_tolerance=0.1,
-               n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=run_name, verbose=True)
+               n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename='output/' + run_name, verbose=True)
 end = time.time()
 print(end - start)
 # In[ ]:
 
 
-PosteriorAnalysis.compute_minimal_auxiliary_data_Baryonic(run_name, EOS,
+PosteriorAnalysis.compute_minimal_auxiliary_data_Baryonic('output/' + run_name, EOS,
                                          variable_params, static_params, chirp_mass)
