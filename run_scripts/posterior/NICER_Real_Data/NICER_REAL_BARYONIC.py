@@ -36,7 +36,7 @@ eos_name = 'polytropes'
 data_path = '../../../data/'
 
 
-EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler',rho_t = 2e14, adm_type = 'None')
+EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler',rho_t = 1.1*rho_ns, adm_type = 'None')
 
 # Here we implement old NICER data on J0740 and J0030 from Riley et al.
 

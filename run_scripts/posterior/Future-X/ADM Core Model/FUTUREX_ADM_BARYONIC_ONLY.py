@@ -28,7 +28,7 @@ rho_ns = global_imports._rhons
 eos_name = 'polytropes'
 
 
-EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler',rho_t = 2e14, adm_type = 'None')
+EOS = polytropes.PolytropicEoS(crust = 'ceft-Hebeler',rho_t = 1.1*rho_ns, adm_type = 'None')
 
 # Here we implement synthetic data based on the future-x scenario with more sources
 
