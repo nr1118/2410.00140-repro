@@ -81,24 +81,8 @@ f_chi = lambda d: rhochi(d)/(rho_total(d))
 # In[8]:
 
 
-#J0740
-
 #Sgr A* in the icrs frame,i.e, frame of the barycenter of the solar system, which is basically just outside of the sun
 sgrA = coord.SkyCoord(ra =266.41681663*u.degree, dec =-29.00782497*u.degree, distance = 8.3*u.kpc,frame = 'icrs')
-
-
-
-#PSR J0740+6620 see Fonseca et al. 2021 APJL 915 L12 for distance measurement
-J0740 = coord.SkyCoord(ra =115.19082917*u.degree, dec = 66.34266667*u.degree, distance = 1.14*u.kpc,frame = 'icrs')
-
-
-dist_0740toGC = sgrA.separation_3d(J0740).value
-
-
-print(dist_0740toGC)
-
-print('Fchi Estimate: '+str(f_chi(dist_0740toGC)*100))
-
 
 
 # In[9]:
