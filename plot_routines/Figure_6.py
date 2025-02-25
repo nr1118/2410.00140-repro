@@ -11,9 +11,13 @@ import matplotlib.patches as mpatches
 from matplotlib import pyplot
 import seaborn as sns
 from scipy.stats import gaussian_kde
-import pathlib
 from matplotlib.colors import ListedColormap
 
+
+import os
+import pathlib
+import argparse
+import sys
 
 # In[2]:
 
@@ -39,15 +43,35 @@ pyplot.rcParams['ytick.right'] = True
 pyplot.rcParams['xtick.top'] = True 
 
 
-# In[4]:
+parser = argparse.ArgumentParser()
+parser.add_argument('-r', '--repro', action='store_true')
+parser.add_argument('-name_prior', '--name_prior', type=str)
+parser.add_argument('-name_posterior_incladm_real', '--name_posterior_incladm_real', type=str)
+parser.add_argument('-name_posterior_negladm_real', '--name_posterior_negladm_real', type=str)
+parser.add_argument('-name_posterior_incladm_adm', '--name_posterior_incladm_adm', type=str)
+parser.add_argument('-name_posterior_negladm_adm', '--name_posterior_negladm_adm', type=str)
+parser.add_argument('-name_posterior_incladm_noadm', '--name_posterior_incladm_noadm', type=str)
+parser.add_argument('-name_posterior_negladm_noadm', '--name_posterior_negladm_noadm', type=str)
+args = parser.parse_args()
+
+
+if args.repro:
+    run_nameprior = args.name_prior
+    run_nameposterior_incladm_real = args.name_posterior_incladm_real
+    run_nameposterior_negladm_real = args.name_posterior_negladm_real
+    run_nameposterior_incladm_adm = args.name_posterior_incladm_adm
+    run_nameposterior_negladm_adm = args.name_posterior_negladm_adm
+    run_nameposterior_incladm_noadm = args.name_posterior_incladm_noadm
+    run_nameposterior_negladm_noadm = args.name_posterior_negladm_noadm
+
 
 
 plots_directory = '../plots/'
-prior_directory = '../results/prior/'
+prior_directory = '../results/prior/' if not args.repro else f'../repro/prior/{run_nameprior}/'
 
-including_noadmcore_directory = '../results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_VARYING_BARYONIC/'
+including_noadmcore_directory = '../results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior_incladm_noadm}/'
 
-neglecting_noadmcore_directory = '../results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_BARYONIC_ONLY/'
+neglecting_noadmcore_directory = '../results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_BARYONIC_ONLY/' if not args.repro else f'../repro/posterior/{run_nameposterior_negladm_noadm}/'
 
 
 # In[5]:
@@ -88,20 +112,27 @@ def calc_bands(x, y):
 
 
 energydensities = np.logspace(14.2, 16, 50)
-pressures_prior = np.load(prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_Pressure_array.npy')
+
+if args.repro:
+    pressures_prior =  np.load(prior_directory + f'{run_nameprior}' + 'pressures.npy')
+    maxpres_adm_NI = np.load(including_noadmcore_directory + f'{run_nameposterior_incladm_noadm}'+'maxpres.npy')
+    minpres_adm_NI = np.load(including_noadmcore_directory + f'{run_nameposterior_incladm_noadm}'+'minpres.npy')
+    contours_min = np.load(neglecting_noadmcore_directory + f'{run_nameposterior_negladm_noadm}'+'minpres.npy')
+    contours_max = np.load(neglecting_noadmcore_directory + f'{run_nameposterior_negladm_noadm}'+'maxpres.npy')
+
+else:
+    pressures_prior = np.load(prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_pressures.npy')
+    maxpres_adm_NI = np.load(including_noadmcore_directory + 'FUTUREX_NO_ADM_VARYING_BARYONIC_maxpres.npy')
+    minpres_adm_NI = np.load(including_noadmcore_directory + 'FUTUREX_NO_ADM_VARYING_BARYONIC_minpres.npy')
+    contours_min = np.load(neglecting_noadmcore_directory + 'FUTUREX_NO_ADM_BARYONIC_ONLY_minpres.npy')
+    contours_max = np.load(neglecting_noadmcore_directory + 'FUTUREX_NO_ADM_BARYONIC_ONLY_maxpres.npy')
+
+
 prior_contours = calc_bands(energydensities, pressures_prior)
 
 
-maxpres_adm_NI = np.load(including_noadmcore_directory + 'FUTUREX_NO_ADM_VARYING_BARYONIC_maxpres.npy')
-minpres_adm_NI = np.load(including_noadmcore_directory + 'FUTUREX_NO_ADM_VARYING_BARYONIC_minpres.npy')
-adm_contours_NI = minpres_adm_NI,maxpres_adm_NI
+adm_contours_NI = minpres_adm_NI,maxpres_adm_NI #log_10 done later in the script
 
-
-# In[8]:
-
-
-contours_min = np.load(neglecting_noadmcore_directory + 'FUTUREX_NO_ADM_BARYONIC_ONLY_minpres.npy')
-contours_max = np.load(neglecting_noadmcore_directory + 'FUTUREX_NO_ADM_BARYONIC_ONLY_maxpres.npy')
 minpres_ppNI = np.log10(contours_min)
 maxpres_ppNI = np.log10(contours_max)
 
@@ -110,26 +141,20 @@ maxpres_ppNI = np.log10(contours_max)
 
 
 def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = None,ax = None):
-    pre_scatter_ADM = np.loadtxt(root_name_ADM + 'MR_prpr.txt')
-    scatter_ADM = []
-    for i in range(len(pre_scatter_ADM)):
-        if pre_scatter_ADM[i][1] >0. and pre_scatter_ADM[i][1] < 20.: #eliminating Halos (>0) and the few stars that were sampled of having radii larger than what NICER considers (>20)
-            scatter_ADM.append([pre_scatter_ADM[i][0],pre_scatter_ADM[i][1]])
-            
-    scatter_ADM = np.array(scatter_ADM)
-    
+    MR_ADM = np.loadtxt(root_name_ADM + 'MR_prpr.txt')
+
 
     
-    sns.kdeplot(x = scatter_ADM[:,1], y = scatter_ADM[:,0], gridsize=40, 
+    sns.kdeplot(x = MR_ADM[:,1], y = MR_ADM[:,0], gridsize=40, 
                fill=False, ax=ax, levels=[0.05,0.32,1.],bw_adjust = 1.5,
                 alpha=1., colors = '#E76F51',linestyles = '-.',linewidths = 3.)
 
     if root_prior is not None:
-        scatter_prior = np.loadtxt(root_prior + 'scattered.txt')
+        MR_prior = np.loadtxt(root_prior + 'MR_prpr.txt')
 
 
     
-        sns.kdeplot(x = scatter_prior[:,6], y = scatter_prior[:,5], gridsize=40, 
+        sns.kdeplot(x = MR_prior[:,1], y = MR_prior[:,0], gridsize=40, 
                    fill=False, ax=ax, levels=[0.05],bw_adjust = 1.5,
                     alpha=1., colors = 'black',linestyles = '--',linewidths = 3.)
 
@@ -156,9 +181,14 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
 # In[10]:
 
 
-root_name_ADM = including_noadmcore_directory + 'FUTUREX_NO_ADM_VARYING_BARYONIC_'
-root_name_B = neglecting_noadmcore_directory + 'FUTUREX_NO_ADM_BARYONIC_ONLY_'
-root_prior = prior_directory +  'FERMIONIC_REAL_DATA_PRIOR_'
+if args.repro:
+    root_name_ADM = including_noadmcore_directory + f'{run_nameposterior_incladm_noadm}'
+    root_name_B = neglecting_noadmcore_directory + f'{run_nameposterior_negladm_noadm}'
+    root_prior = prior_directory + f'{run_nameprior}'
+else:
+    root_name_ADM = including_noadmcore_directory + 'FUTUREX_NO_ADM_VARYING_BARYONIC_'
+    root_name_B = neglecting_noadmcore_directory + 'FUTUREX_NO_ADM_BARYONIC_ONLY_'
+    root_prior = prior_directory +  'FERMIONIC_REAL_DATA_PRIOR_'
 
 
 # In[11]:
@@ -239,41 +269,54 @@ fig.savefig(plots_directory + 'FutureX_NO_ADM_core_posteriors.png',bbox_inches='
 # In[12]:
 
 
-prior_directory = '../results/prior/'
 
-including_admcore_directory = '../results/posterior/Future-X/ADM_Model/FUTUREX_ADM_VARYING_BARYONIC/'
+prior_directory = '../results/prior/' if not args.repro else f'../repro/prior/{run_nameprior}/'
 
-neglecting_admcore_directory = '../results/posterior/Future-X/ADM_Model/FUTUREX_ADM_BARYONIC_ONLY/'
+including_admcore_directory = '../results/posterior/Future-X/ADM_Model/FUTUREX_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior_incladm_adm}/'
+
+neglecting_admcore_directory = '../results/posterior/Future-X/ADM_Model/FUTUREX_ADM_BARYONIC_ONLY/' if not args.repro else f'../repro/posterior/{run_nameposterior_negladm_adm}/'
 
 
 # In[13]:
 
 
 energydensities = np.logspace(14.2, 16, 50)
-pressures_prior = np.load(prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_Pressure_array.npy')
+
+if args.repro:
+    pressures_prior =  np.load(prior_directory + f'{run_nameprior}' + 'pressures.npy')
+    maxpres_adm_NI = np.load(including_admcore_directory + f'{run_nameposterior_incladm_adm}'+'maxpres.npy')
+    minpres_adm_NI = np.load(including_admcore_directory + f'{run_nameposterior_incladm_adm}'+'minpres.npy')
+    contours_min = np.load(neglecting_admcore_directory + f'{run_nameposterior_negladm_adm}'+'minpres.npy')
+    contours_max = np.load(neglecting_admcore_directory + f'{run_nameposterior_negladm_adm}'+'maxpres.npy')
+else:
+    pressures_prior = np.load(prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_pressures.npy')
+    maxpres_adm_NI = np.load(including_admcore_directory + 'FUTUREX_ADM_VARYING_BARYONIC_maxpres.npy')
+    minpres_adm_NI = np.load(including_admcore_directory + 'FUTUREX_ADM_VARYING_BARYONIC_minpres.npy')
+    contours_min = np.load(neglecting_admcore_directory + 'FUTUREX_ADM_BARYONIC_ONLY_minpres.npy')
+    contours_max = np.load(neglecting_admcore_directory + 'FUTUREX_ADM_BARYONIC_ONLY_maxpres.npy')
+
+
+
 prior_contours = calc_bands(energydensities, pressures_prior)
 
-
-maxpres_adm_NI = np.load(including_admcore_directory + 'FUTUREX_ADM_VARYING_BARYONIC_maxpres.npy')
-minpres_adm_NI = np.load(including_admcore_directory + 'FUTUREX_ADM_VARYING_BARYONIC_minpres.npy')
 adm_contours_NI = minpres_adm_NI,maxpres_adm_NI
 
 
-# In[14]:
 
-
-contours_min = np.load(neglecting_admcore_directory + 'FUTUREX_ADM_BARYONIC_ONLY_minpres.npy')
-contours_max = np.load(neglecting_admcore_directory + 'FUTUREX_ADM_BARYONIC_ONLY_maxpres.npy')
 minpres_ppNI = np.log10(contours_min)
 maxpres_ppNI = np.log10(contours_max)
 
 
 # In[15]:
 
-
-root_name_ADM = including_admcore_directory + 'FUTUREX_ADM_VARYING_BARYONIC_'
-root_name_B = neglecting_admcore_directory + 'FUTUREX_ADM_BARYONIC_ONLY_'
-root_prior = prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_'
+if args.repro:
+    root_name_ADM = including_admcore_directory + f'{run_nameposterior_incladm_adm}'
+    root_name_B = neglecting_admcore_directory + f'{run_nameposterior_negladm_adm}'
+    root_prior = prior_directory + f'{run_nameprior}'
+else:
+    root_name_ADM = including_admcore_directory + 'FUTUREX_ADM_VARYING_BARYONIC_'
+    root_name_B = neglecting_admcore_directory + 'FUTUREX_ADM_BARYONIC_ONLY_'
+    root_prior = prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_'
 
 
 # In[16]:
@@ -345,7 +388,6 @@ pyplot.show()
 fig.savefig(plots_directory + 'FutureX_ADM_core_posteriors.png',bbox_inches='tight')
 
 
-# In[ ]:
 
 
 

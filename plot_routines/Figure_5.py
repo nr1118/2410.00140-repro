@@ -12,6 +12,13 @@ from matplotlib import pyplot
 import matplotlib.patches as mpatches
 
 
+import os
+import pathlib
+import argparse
+import sys
+
+
+
 # In[2]:
 
 
@@ -20,15 +27,35 @@ plt.rcParams['mathtext.rm'] = 'serif'
 plt.rcParams['font.family'] ='serif'
 
 
-# In[3]:
+parser = argparse.ArgumentParser()
+parser.add_argument('-r', '--repro', action='store_true')
+parser.add_argument('-name_prior', '--name_prior', type=str)
+parser.add_argument('-name_posterior_incladm_real', '--name_posterior_incladm_real', type=str)
+parser.add_argument('-name_posterior_negladm_real', '--name_posterior_negladm_real', type=str)
+parser.add_argument('-name_posterior_incladm_adm', '--name_posterior_incladm_adm', type=str)
+parser.add_argument('-name_posterior_negladm_adm', '--name_posterior_negladm_adm', type=str)
+parser.add_argument('-name_posterior_incladm_noadm', '--name_posterior_incladm_noadm', type=str)
+parser.add_argument('-name_posterior_negladm_noadm', '--name_posterior_negladm_noadm', type=str)
+args = parser.parse_args()
 
 
-prior_data_directory = '../results/prior/'
-posterior_data_directory = '../results/posterior/Future-X/ADM_Model/FUTUREX_ADM_VARYING_BARYONIC/'
+if args.repro:
+    run_nameprior = args.name_prior
+    run_nameposterior_incladm_real = args.name_posterior_incladm_real
+    run_nameposterior_negladm_real = args.name_posterior_negladm_real
+    run_nameposterior_incladm_adm = args.name_posterior_incladm_adm
+    run_nameposterior_negladm_adm = args.name_posterior_negladm_adm
+    run_nameposterior_incladm_noadm = args.name_posterior_incladm_noadm
+    run_nameposterior_negladm_noadm = args.name_posterior_negladm_noadm
+
+prior_data_directory = '../results/prior/' if not args.repro else f'../repro/prior/{run_nameprior}/'
+
+
+posterior_data_directory = '../results/posterior/Future-X/ADM_Model/FUTUREX_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior_incladm_adm}/'
 
 plots_directory = '../plots/' 
 
-run_name = 'FERMIONIC_FUTUREX_ADM_MODEL_POSTERIOR_PRIOR_'
+plot_name = 'FERMIONIC_FUTUREX_ADM_MODEL_POSTERIOR_PRIOR_'
 
 
 # In[ ]:
@@ -39,8 +66,15 @@ run_name = 'FERMIONIC_FUTUREX_ADM_MODEL_POSTERIOR_PRIOR_'
 
 # In[4]:
 
+if args.repro:
+    tmp = np.loadtxt(prior_data_directory + f'{run_nameprior}' + 'post_equal_weights.dat')
+    ewposterior = np.loadtxt(posterior_data_directory + f'{run_nameposterior_incladm_adm}'+'post_equal_weights.dat')
 
-tmp = np.loadtxt(prior_data_directory + 'FERMIONIC_REAL_DATA_PRIOR_post_equal_weights.dat')
+else:
+    tmp = np.loadtxt(prior_data_directory + 'FERMIONIC_REAL_DATA_PRIOR_post_equal_weights.dat')
+    ewposterior = np.loadtxt(posterior_data_directory + 'FUTUREX_ADM_VARYING_BARYONIC_post_equal_weights.dat')
+
+
 print('Generating the prior data for corner plot')
 
 
@@ -59,7 +93,6 @@ for i in range(len(tmp)):
 
 print('Generating the posterior corner plot')
 
-ewposterior = np.loadtxt(posterior_data_directory + 'FUTUREX_ADM_VARYING_BARYONIC_post_equal_weights.dat')
 
 
 
@@ -96,7 +129,7 @@ corner.overplot_lines(figure, ground_truth, color="C1",lw = 2.0)
 
 
 
-figure.savefig(plots_directory + run_name + 'Corner.png',bbox_inches='tight')
+figure.savefig(plots_directory + plot_name + 'Corner.png',bbox_inches='tight')
 
 
 # In[6]:
@@ -197,7 +230,7 @@ ax.minorticks_on()
 
 
 
-figure.savefig(plots_directory + run_name + 'ratio_plot.png',bbox_inches='tight')
+figure.savefig(plots_directory + plot_name + 'ratio_plot.png',bbox_inches='tight')
 
 
 # In[ ]:
@@ -209,22 +242,21 @@ figure.savefig(plots_directory + run_name + 'ratio_plot.png',bbox_inches='tight'
 # In[13]:
 
 
-prior_data_directory = '../results/prior/'
-posterior_data_directory = '../results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_VARYING_BARYONIC/'
+
+prior_data_directory = '../results/prior/' if not args.repro else f'../repro/prior/{run_nameprior}/'
+posterior_data_directory = '../results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior_incladm_noadm}/'
 
 plots_directory = '../plots/' 
 
-run_name = 'FERMIONIC_FUTUREX_NO_ADM_MODEL_POSTERIOR_PRIOR_'
+plot_name = 'FERMIONIC_FUTUREX_NO_ADM_MODEL_POSTERIOR_PRIOR_'
 
+if args.repro:
+    ewposterior = np.loadtxt(posterior_data_directory + f'{run_nameposterior_incladm_noadm}'+'post_equal_weights.dat')
 
-# In[14]:
-
+else:
+    ewposterior = np.loadtxt(posterior_data_directory + 'FUTUREX_NO_ADM_VARYING_BARYONIC_post_equal_weights.dat')
 
 print('Generating the posterior corner plot')
-
-ewposterior = np.loadtxt(posterior_data_directory + 'FUTUREX_NO_ADM_VARYING_BARYONIC_post_equal_weights.dat')
-
-
 
 mchi = ewposterior[:,5]
 gchi_over_mphi = ewposterior[:,6]
@@ -251,7 +283,7 @@ for ax in figure.get_axes():
     ax.tick_params(axis='both', labelsize=15) 
     
 
-figure.savefig(plots_directory + run_name + 'Corner.png',bbox_inches='tight')
+figure.savefig(plots_directory + plot_name + 'Corner.png',bbox_inches='tight')
 
 
 # In[15]:
@@ -312,10 +344,10 @@ ax.minorticks_on()
 
 
 
-figure.savefig(plots_directory + run_name + 'ratio_plot.png',bbox_inches='tight')
+figure.savefig(plots_directory + plot_name + 'ratio_plot.png',bbox_inches='tight')
 
 
-# In[ ]:
+
 
 
 

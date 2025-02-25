@@ -38,9 +38,23 @@ pyplot.rcParams['xtick.top'] = True
 parser = argparse.ArgumentParser()
 parser.add_argument('-r', '--repro', action='store_true')
 parser.add_argument('-name_prior', '--name_prior', type=str)
-parser.add_argument('-name_posterior', '--name_posterior', type=str)
-parser.add_argument('-name_posterior2', '--name_posterior2', type=str)
+parser.add_argument('-name_posterior_incladm_real', '--name_posterior_incladm_real', type=str)
+parser.add_argument('-name_posterior_negladm_real', '--name_posterior_negladm_real', type=str)
+parser.add_argument('-name_posterior_incladm_adm', '--name_posterior_incladm_adm', type=str)
+parser.add_argument('-name_posterior_negladm_adm', '--name_posterior_negladm_adm', type=str)
+parser.add_argument('-name_posterior_incladm_noadm', '--name_posterior_incladm_noadm', type=str)
+parser.add_argument('-name_posterior_negladm_noadm', '--name_posterior_negladm_noadm', type=str)
 args = parser.parse_args()
+
+
+if args.repro:
+    run_nameprior = args.name_prior
+    run_nameposterior_incladm_real = args.name_posterior_incladm_real
+    run_nameposterior_negladm_real = args.name_posterior_negladm_real
+    run_nameposterior_incladm_adm = args.name_posterior_incladm_adm
+    run_nameposterior_negladm_adm = args.name_posterior_negladm_adm
+    run_nameposterior_incladm_noadm = args.name_posterior_incladm_noadm
+    run_nameposterior_negladm_noadm = args.name_posterior_negladm_noadm
 
 
 tmp_color = sns.cubehelix_palette(8, start=.5, rot=-.75, dark=0.2, light=.85)[0::3]
@@ -53,16 +67,13 @@ c_baryonic = tmp_color[:2]
 plots_directory = '../plots/'
 
 
-if args.repro:
-    run_nameprior = args.name_prior
-    run_nameposterior = args.name_posterior
-    run_nameposterior2 = args.name_posterior2
+
 
 prior_directory = f'../results/prior/' if not args.repro else f'../repro/prior/{run_nameprior}/'
 
-including_adm_directory = '../results/posterior/NICER_Real_Data/NICER_REAL_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/including_adm/{run_nameposterior}/'
+including_adm_directory = '../results/posterior/NICER_Real_Data/NICER_REAL_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior_incladm_real}/'
 
-neglecting_adm_directory = '../results/posterior/NICER_Real_Data/NICER_REAL_BARYONIC/' if not args.repro else f'../repro/posterior/neglecting_adm/{run_nameposterior2}/'
+neglecting_adm_directory = '../results/posterior/NICER_Real_Data/NICER_REAL_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior_negladm_real}/'
 
 
 # In[5]:
@@ -105,10 +116,10 @@ def calc_bands(x, y):
 energydensities = np.logspace(14.2, 16, 50)
 if args.repro:
     pressures_prior =  np.load(prior_directory + f'{run_nameprior}' + 'pressures.npy')
-    maxpres_adm_NI = np.load(including_adm_directory + f'{run_nameposterior}'+'maxpres.npy')
-    minpres_adm_NI = np.load(including_adm_directory + f'{run_nameposterior}'+'minpres.npy')
-    contours_min = np.load(neglecting_adm_directory + f'{run_nameposterior2}'+'minpres.npy')
-    contours_max = np.load(neglecting_adm_directory + f'{run_nameposterior2}'+'maxpres.npy')
+    maxpres_adm_NI = np.load(including_adm_directory + f'{run_nameposterior_incladm_real}'+'maxpres.npy')
+    minpres_adm_NI = np.load(including_adm_directory + f'{run_nameposterior_incladm_real}'+'minpres.npy')
+    contours_min = np.load(neglecting_adm_directory + f'{run_nameposterior_negladm_real}'+'minpres.npy')
+    contours_max = np.load(neglecting_adm_directory + f'{run_nameposterior_negladm_real}'+'maxpres.npy')
 
 
 else:
@@ -132,16 +143,10 @@ maxpres_ppNI = np.log10(contours_max)
 
 
 def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = None,ax = None):
-    pre_scatter_ADM = np.loadtxt(root_name_ADM + 'scattered.txt')
-    scatter_ADM = []
-    for i in range(len(pre_scatter_ADM)):
-        if pre_scatter_ADM[i][3] >0. and pre_scatter_ADM[i][3] < 20.: #eliminating Halos (>0) and the few stars that were sampled of having radii larger than what NICER considers (>20)
-            scatter_ADM.append([pre_scatter_ADM[i][2],pre_scatter_ADM[i][3]])
-            
-    scatter_ADM = np.array(scatter_ADM)
+    MR_ADM = np.loadtxt(root_name_ADM + 'MR_prpr.txt')
 
     
-    kdeadm = sns.kdeplot(x = scatter_ADM[:,1], y = scatter_ADM[:,0], gridsize=40, 
+    kdeadm = sns.kdeplot(x = MR_ADM[:,1], y = MR_ADM[:,0], gridsize=40, 
                fill=False, ax=ax, levels=[0.05,0.32,1.],bw_adjust = 1.5,
                 alpha=1., colors = '#E76F51',linestyles = '-.',linewidths = 3.)
     
@@ -158,11 +163,11 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
     print('95% Max mass Including ADM: ',ly_95)
 
     if root_prior is not None:
-        scatter_prior = np.loadtxt(root_prior + 'scattered.txt')
+        MR_prior = np.loadtxt(root_prior + 'MR_prpr.txt')
 
 
     
-        sns.kdeplot(x = scatter_prior[:,6], y = scatter_prior[:,5], gridsize=40, 
+        sns.kdeplot(x = MR_prior[:,1], y = MR_prior[:,0], gridsize=40, 
                    fill=False, ax=ax, levels=[0.05],bw_adjust = 1.5,
                     alpha=1., colors = 'black',linestyles = '--',linewidths = 3.)
 
@@ -191,8 +196,8 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
 # In[10]:
 
 if args.repro:
-    root_name_ADM = including_adm_directory + f'{run_nameposterior}'
-    root_name_B = neglecting_adm_directory + f'{run_nameposterior2}'
+    root_name_ADM = including_adm_directory + f'{run_nameposterior_incladm_real}'
+    root_name_B = neglecting_adm_directory + f'{run_nameposterior_negladm_real}'
     root_prior = prior_directory + f'{run_nameprior}'
 else:
     root_name_ADM = including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_'
@@ -277,7 +282,7 @@ fig.savefig(plots_directory + 'Real_data_posterior.png',bbox_inches='tight')
 #Baryonic (Neglecting ADM)
 
 if args.repro:
-    root_name_B = neglecting_adm_directory + f'{run_nameposterior2}'
+    root_name_B = neglecting_adm_directory + f'{run_nameposterior_negladm_real}'
 else:
     root_name_B = neglecting_adm_directory + 'NICER_REAL_BARYONIC_'
 
@@ -306,8 +311,8 @@ print('95% Max mass Neglecting ADM: ',ly_95)
 import corner as corner
 
 if args.repro:
-    pressure_NICER_ADM = np.load(including_adm_directory + f'{run_nameposterior}' + 'pressures.npy')
-    pressure_NICER_no_ADM =  np.load(neglecting_adm_directory + f'{run_nameposterior2}' + 'pressures.npy')
+    pressure_NICER_ADM = np.load(including_adm_directory + f'{run_nameposterior_incladm_real}' + 'pressures.npy')
+    pressure_NICER_no_ADM =  np.load(neglecting_adm_directory + f'{run_nameposterior_negladm_real}' + 'pressures.npy')
 else:
     pressure_NICER_ADM = np.load(including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_pressures.npy')
     pressure_NICER_no_ADM = np.load(neglecting_adm_directory + 'NICER_REAL_BARYONIC_pressures.npy')
@@ -366,7 +371,7 @@ Percent_change_ADM = ((W_ADM-W_noADM)/W_noADM)*100
 print('Percent diff: ', Percent_change_ADM)
 
 
-# In[ ]:
+
 
 
 

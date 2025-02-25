@@ -29,11 +29,11 @@ plt.rcParams['font.family'] ='serif'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-r', '--repro', action='store_true')
-parser.add_argument('-name', '--name', type=str)
+parser.add_argument('-name_prior', '--name_prior', type=str)
 args = parser.parse_args()
 
 if args.repro:
-    run_name = args.name
+    run_name = args.name_prior
     
 plot_name = 'FERMIONIC_REAL_DATA_PRIOR_'
 
