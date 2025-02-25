@@ -117,7 +117,7 @@ if args.repro:
     contours_max = np.load(neglecting_noadmcore_directory + f'{run_nameposterior_negladm_noadm}'+'maxpres.npy')
 
 else:
-    pressures_prior = np.load(prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_pressures.npy')
+    pressures_prior = np.load(prior_directory + 'FERMIONIC_PRIOR_pressures.npy')
     maxpres_adm_NI = np.load(including_noadmcore_directory + 'FUTUREX_NO_ADM_VARYING_BARYONIC_maxpres.npy')
     minpres_adm_NI = np.load(including_noadmcore_directory + 'FUTUREX_NO_ADM_VARYING_BARYONIC_minpres.npy')
     contours_min = np.load(neglecting_noadmcore_directory + 'FUTUREX_NO_ADM_BARYONIC_ONLY_minpres.npy')
@@ -184,7 +184,7 @@ if args.repro:
 else:
     root_name_ADM = including_noadmcore_directory + 'FUTUREX_NO_ADM_VARYING_BARYONIC_'
     root_name_B = neglecting_noadmcore_directory + 'FUTUREX_NO_ADM_BARYONIC_ONLY_'
-    root_prior = prior_directory +  'FERMIONIC_REAL_DATA_PRIOR_'
+    root_prior = prior_directory +  'FERMIONIC_PRIOR_'
 
 
 # In[11]:
@@ -285,7 +285,7 @@ if args.repro:
     contours_min = np.load(neglecting_admcore_directory + f'{run_nameposterior_negladm_adm}'+'minpres.npy')
     contours_max = np.load(neglecting_admcore_directory + f'{run_nameposterior_negladm_adm}'+'maxpres.npy')
 else:
-    pressures_prior = np.load(prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_pressures.npy')
+    pressures_prior = np.load(prior_directory + 'FERMIONIC_PRIOR_pressures.npy')
     maxpres_adm_NI = np.load(including_admcore_directory + 'FUTUREX_ADM_VARYING_BARYONIC_maxpres.npy')
     minpres_adm_NI = np.load(including_admcore_directory + 'FUTUREX_ADM_VARYING_BARYONIC_minpres.npy')
     contours_min = np.load(neglecting_admcore_directory + 'FUTUREX_ADM_BARYONIC_ONLY_minpres.npy')
@@ -312,7 +312,7 @@ if args.repro:
 else:
     root_name_ADM = including_admcore_directory + 'FUTUREX_ADM_VARYING_BARYONIC_'
     root_name_B = neglecting_admcore_directory + 'FUTUREX_ADM_BARYONIC_ONLY_'
-    root_prior = prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_'
+    root_prior = prior_directory + 'FERMIONIC_PRIOR_'
 
 
 # In[16]:

@@ -115,7 +115,7 @@ if args.repro:
 
 
 else:
-    pressures_prior = np.load(prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_pressures.npy')
+    pressures_prior = np.load(prior_directory + 'FERMIONIC_PRIOR_pressures.npy')
     maxpres_adm_NI = np.load(including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_maxpres.npy')
     minpres_adm_NI = np.load(including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_minpres.npy')
     contours_min = np.load(neglecting_adm_directory + 'NICER_REAL_BARYONIC_minpres.npy')
@@ -194,7 +194,7 @@ if args.repro:
 else:
     root_name_ADM = including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_'
     root_name_B = neglecting_adm_directory + 'NICER_REAL_BARYONIC_'
-    root_prior = prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_'
+    root_prior = prior_directory + 'FERMIONIC_PRIOR_'
 
 
 # In[11]:

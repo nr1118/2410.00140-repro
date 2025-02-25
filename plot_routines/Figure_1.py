@@ -35,7 +35,7 @@ args = parser.parse_args()
 if args.repro:
     run_name = args.name_prior
     
-plot_name = 'FERMIONIC_REAL_DATA_PRIOR_'
+plot_name = 'FERMIONIC_PRIOR_'
 
 data_directory = '../results/prior/' if not args.repro else f'../repro/prior/{run_name}/'
 
@@ -50,7 +50,7 @@ plots_directory = '../plots/'
 if args.repro:
     tmp = np.loadtxt(data_directory + f'{run_name}' + 'post_equal_weights.dat')
 else:
-    tmp = np.loadtxt(data_directory + 'FERMIONIC_REAL_DATA_PRIOR_post_equal_weights.dat')
+    tmp = np.loadtxt(data_directory + 'FERMIONIC_PRIOR_post_equal_weights.dat')
 
     
 print('Generating the prior corner plot')

@@ -67,7 +67,7 @@ if args.repro:
     ewposterior = np.loadtxt(posterior_data_directory + f'{run_nameposterior_incladm_adm}'+'post_equal_weights.dat')
 
 else:
-    tmp = np.loadtxt(prior_data_directory + 'FERMIONIC_REAL_DATA_PRIOR_post_equal_weights.dat')
+    tmp = np.loadtxt(prior_data_directory + 'FERMIONIC_PRIOR_post_equal_weights.dat')
     ewposterior = np.loadtxt(posterior_data_directory + 'FUTUREX_ADM_VARYING_BARYONIC_post_equal_weights.dat')
 
 
