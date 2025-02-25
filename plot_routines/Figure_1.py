@@ -11,6 +11,11 @@ import matplotlib as plt
 from matplotlib import pyplot
 import matplotlib.patches as mpatches
 
+import os
+import pathlib
+import argparse
+import sys
+
 
 # In[2]:
 
@@ -22,8 +27,12 @@ plt.rcParams['font.family'] ='serif'
 
 # In[3]:
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-r', '--repro', action='store_true')
+args = parser.parse_args()
 
-data_directory = '../results/prior/'
+
+data_directory = f'../results/prior/' if not args.repro else f'../repro/prior/'
 
 plots_directory = '../plots/' 
 

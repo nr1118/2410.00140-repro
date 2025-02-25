@@ -13,17 +13,19 @@ from matplotlib import pyplot
 
 
 from matplotlib.patches import Ellipse 
+import os
 import pathlib
+import argparse
+import sys
+
 
 
 # In[3]:
 
 
-plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
-plt.rc('text', usetex=True)
-
-pyplot.rc('text', usetex=True)
-pyplot.rc('font', family='serif')
+plt.rcParams['mathtext.fontset'] = 'custom'
+plt.rcParams['mathtext.rm'] = 'serif'
+plt.rcParams['font.family'] ='serif'
 
 pyplot.rcParams['xtick.direction'] = 'in'
 pyplot.rcParams['xtick.minor.visible'] = True
