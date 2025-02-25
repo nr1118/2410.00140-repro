@@ -12,7 +12,11 @@ from matplotlib import pyplot
 import matplotlib.patches as mpatches
 
 
-# In[2]:
+import os
+import pathlib
+import argparse
+import sys
+
 
 
 plt.rcParams['mathtext.fontset'] = 'custom'
@@ -22,13 +26,26 @@ plt.rcParams['font.family'] ='serif'
 
 # In[3]:
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-r', '--repro', action='store_true')
+parser.add_argument('-name_prior', '--name_prior', type=str)
+parser.add_argument('-name_posterior', '--name_posterior', type=str)
+args = parser.parse_args()
 
-prior_data_directory = '../results/prior/'
-posterior_data_directory = '../results/posterior/NICER_Real_Data/NICER_REAL_ADM_VARYING_BARYONIC/'
+if args.repro:
+    run_nameprior = args.name_prior
+    run_nameposterior = args.name_posterior
+
+
+plot_name = 'FERMIONIC_REAL_DATA_POSTERIOR_PRIOR_'
+
+prior_data_directory = f'../results/prior/' if not args.repro else f'../repro/prior/{run_nameprior}/'
+
+posterior_data_directory = '../results/posterior/NICER_Real_Data/NICER_REAL_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior}/'
 
 plots_directory = '../plots/' 
 
-run_name = 'FERMIONIC_REAL_DATA_POSTERIOR_PRIOR_'
+
 
 
 # In[ ]:
@@ -40,7 +57,12 @@ run_name = 'FERMIONIC_REAL_DATA_POSTERIOR_PRIOR_'
 # In[4]:
 
 
-tmp = np.loadtxt(prior_data_directory + 'FERMIONIC_REAL_DATA_PRIOR_post_equal_weights.dat')
+if args.repro:
+    tmp = np.loadtxt(prior_data_directory + f'{run_nameprior}' + 'post_equal_weights.dat')
+    ewposterior = np.loadtxt(posterior_data_directory + f'{run_nameposterior}'+'post_equal_weights.dat')
+else:
+    tmp = np.loadtxt(prior_data_directory + 'FERMIONIC_REAL_DATA_PRIOR_post_equal_weights.dat')
+    ewposterior = np.loadtxt(posterior_data_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_post_equal_weights.dat')
 print('Generating the prior corner plot')
 
 
@@ -59,7 +81,7 @@ for i in range(len(tmp)):
 
 print('Generating the posterior corner plot')
 
-ewposterior = np.loadtxt(posterior_data_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_post_equal_weights.dat')
+
 
 
 
@@ -192,7 +214,7 @@ ax.minorticks_on()
 
 
 
-figure.savefig(plots_directory + run_name + 'ratio_plot.png',bbox_inches='tight')
+figure.savefig(plots_directory + plot_name + 'ratio_plot.png',bbox_inches='tight')
 
 
 # In[ ]:

@@ -29,20 +29,30 @@ plt.rcParams['font.family'] ='serif'
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-r', '--repro', action='store_true')
+parser.add_argument('-name', '--name', type=str)
 args = parser.parse_args()
 
+if args.repro:
+    run_name = args.name
+    
+plot_name = 'FERMIONIC_REAL_DATA_PRIOR_'
 
-data_directory = f'../results/prior/' if not args.repro else f'../repro/prior/'
+data_directory = '../results/prior/' if not args.repro else f'../repro/prior/{run_name}/'
 
 plots_directory = '../plots/' 
 
-run_name = 'FERMIONIC_REAL_DATA_PRIOR_'
+
 
 
 # In[4]:
 
 
-tmp = np.loadtxt(data_directory + 'FERMIONIC_REAL_DATA_PRIOR_post_equal_weights.dat')
+if args.repro:
+    tmp = np.loadtxt(data_directory + f'{run_name}' + 'post_equal_weights.dat')
+else:
+    tmp = np.loadtxt(data_directory + 'FERMIONIC_REAL_DATA_PRIOR_post_equal_weights.dat')
+
+    
 print('Generating the prior corner plot')
 
 
@@ -69,7 +79,7 @@ figure.subplots_adjust(right=1.15,top=1.15)
 for ax in figure.get_axes():
     ax.tick_params(axis='both', labelsize=15)
     
-figure.savefig(plots_directory + run_name + 'Corner.png',bbox_inches='tight')
+figure.savefig(plots_directory + plot_name + 'Corner.png',bbox_inches='tight')
 
 
 # In[ ]:

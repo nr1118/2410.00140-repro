@@ -11,9 +11,13 @@ import matplotlib.patches as mpatches
 from matplotlib import pyplot
 import seaborn as sns
 from scipy.stats import gaussian_kde
-import pathlib
 from matplotlib.colors import ListedColormap
 
+
+import os
+import pathlib
+import argparse
+import sys
 
 # In[2]:
 
@@ -31,8 +35,12 @@ pyplot.rcParams['ytick.major.size'] = 5
 pyplot.rcParams['ytick.right'] = True
 pyplot.rcParams['xtick.top'] = True 
 
-
-# In[3]:
+parser = argparse.ArgumentParser()
+parser.add_argument('-r', '--repro', action='store_true')
+parser.add_argument('-name_prior', '--name_prior', type=str)
+parser.add_argument('-name_posterior', '--name_posterior', type=str)
+parser.add_argument('-name_posterior2', '--name_posterior2', type=str)
+args = parser.parse_args()
 
 
 tmp_color = sns.cubehelix_palette(8, start=.5, rot=-.75, dark=0.2, light=.85)[0::3]
@@ -44,11 +52,17 @@ c_baryonic = tmp_color[:2]
 
 plots_directory = '../plots/'
 
-prior_directory = '../results/prior/'
 
-including_adm_directory = '../results/posterior/NICER_Real_Data/NICER_REAL_ADM_VARYING_BARYONIC/'
+if args.repro:
+    run_nameprior = args.name_prior
+    run_nameposterior = args.name_posterior
+    run_nameposterior2 = args.name_posterior2
 
-neglecting_adm_directory = '../results/posterior/NICER_Real_Data/NICER_REAL_BARYONIC/'
+prior_directory = f'../results/prior/' if not args.repro else f'../repro/prior/{run_nameprior}/'
+
+including_adm_directory = '../results/posterior/NICER_Real_Data/NICER_REAL_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/including_adm/{run_nameposterior}/'
+
+neglecting_adm_directory = '../results/posterior/NICER_Real_Data/NICER_REAL_BARYONIC/' if not args.repro else f'../repro/posterior/neglecting_adm/{run_nameposterior2}/'
 
 
 # In[5]:
@@ -89,20 +103,27 @@ def calc_bands(x, y):
 
 
 energydensities = np.logspace(14.2, 16, 50)
-pressures_prior = np.load(prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_Pressure_array.npy')
+if args.repro:
+    pressures_prior =  np.load(prior_directory + f'{run_nameprior}' + 'pressures.npy')
+    maxpres_adm_NI = np.load(including_adm_directory + f'{run_nameposterior}'+'maxpres.npy')
+    minpres_adm_NI = np.load(including_adm_directory + f'{run_nameposterior}'+'minpres.npy')
+    contours_min = np.load(neglecting_adm_directory + f'{run_nameposterior2}'+'minpres.npy')
+    contours_max = np.load(neglecting_adm_directory + f'{run_nameposterior2}'+'maxpres.npy')
+
+
+else:
+    pressures_prior = np.load(prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_pressures.npy')
+    maxpres_adm_NI = np.load(including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_maxpres.npy')
+    minpres_adm_NI = np.load(including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_minpres.npy')
+    contours_min = np.load(neglecting_adm_directory + 'NICER_REAL_BARYONIC_minpres.npy')
+    contours_max = np.load(neglecting_adm_directory + 'NICER_REAL_BARYONIC_maxpres.npy')
+
 prior_contours = calc_bands(energydensities, pressures_prior)
 
 
-maxpres_adm_NI = np.load(including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_maxpres.npy')
-minpres_adm_NI = np.load(including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_minpres.npy')
-adm_contours_NI = minpres_adm_NI,maxpres_adm_NI
 
+adm_contours_NI = minpres_adm_NI,maxpres_adm_NI #log_10 done later in the script
 
-# In[8]:
-
-
-contours_min = np.load(neglecting_adm_directory + 'NICER_REAL_BARYONIC_minpres.npy')
-contours_max = np.load(neglecting_adm_directory + 'NICER_REAL_BARYONIC_maxpres.npy')
 minpres_ppNI = np.log10(contours_min)
 maxpres_ppNI = np.log10(contours_max)
 
@@ -169,10 +190,14 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
 
 # In[10]:
 
-
-root_name_ADM = including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_'
-root_name_B = neglecting_adm_directory + 'NICER_REAL_BARYONIC_'
-root_prior = prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_'
+if args.repro:
+    root_name_ADM = including_adm_directory + f'{run_nameposterior}'
+    root_name_B = neglecting_adm_directory + f'{run_nameposterior2}'
+    root_prior = prior_directory + f'{run_nameprior}'
+else:
+    root_name_ADM = including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_'
+    root_name_B = neglecting_adm_directory + 'NICER_REAL_BARYONIC_'
+    root_prior = prior_directory + 'FERMIONIC_REAL_DATA_PRIOR_'
 
 
 # In[11]:
@@ -250,7 +275,12 @@ fig.savefig(plots_directory + 'Real_data_posterior.png',bbox_inches='tight')
 
 
 #Baryonic (Neglecting ADM)
-root_name_B = neglecting_adm_directory + 'NICER_REAL_BARYONIC_'
+
+if args.repro:
+    root_name_B = neglecting_adm_directory + f'{run_nameposterior2}'
+else:
+    root_name_B = neglecting_adm_directory + 'NICER_REAL_BARYONIC_'
+
 MR_prpr_B= np.loadtxt(root_name_B + 'MR_prpr.txt')
 figure, ax = pyplot.subplots(1,1, figsize=(9,6))
 kdeb = sns.kdeplot(x = MR_prpr_B[:,1], y = MR_prpr_B[:,0], gridsize=40,bw_adjust = 1.5, 
@@ -274,11 +304,13 @@ print('95% Max mass Neglecting ADM: ',ly_95)
 
 
 import corner as corner
-pressure_NICER_ADM = np.load(including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_pressures.npy')
 
-
-
-pressure_NICER_no_ADM = np.load(neglecting_adm_directory + 'NICER_REAL_BARYONIC_pressures.npy')
+if args.repro:
+    pressure_NICER_ADM = np.load(including_adm_directory + f'{run_nameposterior}' + 'pressures.npy')
+    pressure_NICER_no_ADM =  np.load(neglecting_adm_directory + f'{run_nameposterior2}' + 'pressures.npy')
+else:
+    pressure_NICER_ADM = np.load(including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_pressures.npy')
+    pressure_NICER_no_ADM = np.load(neglecting_adm_directory + 'NICER_REAL_BARYONIC_pressures.npy')
 
 
 # In[15]:
