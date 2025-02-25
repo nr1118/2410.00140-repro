@@ -11,11 +11,23 @@ import matplotlib.patches as mpatches
 from matplotlib import pyplot
 import seaborn as sns
 from scipy.stats import gaussian_kde
-import pathlib
 from matplotlib.colors import ListedColormap
 
 
-# In[2]:
+import os
+import pathlib
+import argparse
+import sys
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-r', '--repro', action='store_true')
+parser.add_argument('-name_appendix', '--name_appendix', type=str)
+args = parser.parse_args()
+
+
+if args.repro:
+    run_nameappendix = args.name_appendix
 
 
 import neost
@@ -39,7 +51,7 @@ rho_ns = global_imports._rhons
 
 
 plots_directory = '../plots/'
-data_directory = '../results/prior/Appendix_B/'
+data_directory = '../results/prior/Appendix_B/' if not args.repro else f'../repro/{run_nameappendix}/'
 
 
 # In[4]:

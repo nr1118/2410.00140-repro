@@ -46,8 +46,6 @@ pyplot.rcParams['xtick.top'] = True
 parser = argparse.ArgumentParser()
 parser.add_argument('-r', '--repro', action='store_true')
 parser.add_argument('-name_prior', '--name_prior', type=str)
-parser.add_argument('-name_posterior_incladm_real', '--name_posterior_incladm_real', type=str)
-parser.add_argument('-name_posterior_negladm_real', '--name_posterior_negladm_real', type=str)
 parser.add_argument('-name_posterior_incladm_adm', '--name_posterior_incladm_adm', type=str)
 parser.add_argument('-name_posterior_negladm_adm', '--name_posterior_negladm_adm', type=str)
 parser.add_argument('-name_posterior_incladm_noadm', '--name_posterior_incladm_noadm', type=str)
@@ -57,8 +55,6 @@ args = parser.parse_args()
 
 if args.repro:
     run_nameprior = args.name_prior
-    run_nameposterior_incladm_real = args.name_posterior_incladm_real
-    run_nameposterior_negladm_real = args.name_posterior_negladm_real
     run_nameposterior_incladm_adm = args.name_posterior_incladm_adm
     run_nameposterior_negladm_adm = args.name_posterior_negladm_adm
     run_nameposterior_incladm_noadm = args.name_posterior_incladm_noadm
