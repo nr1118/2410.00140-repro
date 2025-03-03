@@ -102,6 +102,10 @@ for i in range(len(gamma1)):
 ax.set_xlabel(r'Radius [km]', fontsize=28)
 ax.set_ylabel(r'Mass [M$_\odot$]', fontsize=28)
 ax.tick_params(width=2, labelsize=22, direction='in')
+ax.set_xlim(8,16)
+ax.set_ylim(0,3.1)
+ax.set_yticks([0,0.5,1.0,1.5,2.0,2.5,3.0])
+ax.set_xticks([8,9,10,11,12,13,14,15,16])
 labs = [l.get_label() for l in lns]
 ax.legend(lns,labs,loc='best', fontsize=26)
 ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.,fontsize=22)
@@ -113,13 +117,7 @@ pyplot.show()
 pyplot.savefig(plots_directory + 'MR_fixed.png')
 
 
-# In[ ]:
 
-
-
-
-
-# In[7]:
 
 
 fig, ax = pyplot.subplots(1,1, figsize=(14,5))
