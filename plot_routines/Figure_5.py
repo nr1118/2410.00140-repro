@@ -19,7 +19,9 @@ import sys
 
 
 
-# In[2]:
+# Paths
+current_path = os.path.dirname(__file__)
+parent = os.path.dirname(current_path)
 
 
 plt.rcParams['mathtext.fontset'] = 'custom'
@@ -44,23 +46,16 @@ if args.repro:
     run_nameposterior_incladm_noadm = args.name_posterior_incladm_noadm
     run_nameposterior_negladm_noadm = args.name_posterior_negladm_noadm
 
-prior_data_directory = '../results/prior/' if not args.repro else f'../repro/prior/{run_nameprior}/'
+prior_data_directory = f'{parent}/results/prior/' if not args.repro else f'{parent}/repro/prior/{run_nameprior}/'
 
 
-posterior_data_directory = '../results/posterior/Future-X/ADM_Model/FUTUREX_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior_incladm_adm}/'
+posterior_data_directory = f'{parent}/results/posterior/Future-X/ADM_Model/FUTUREX_ADM_VARYING_BARYONIC/' if not args.repro else f'{parent}/repro/posterior/{run_nameposterior_incladm_adm}/'
 
-plots_directory = '../plots/' 
+plots_directory = f'{parent}/plots/' 
 
 plot_name = 'FERMIONIC_FUTUREX_ADM_MODEL_POSTERIOR_PRIOR_'
 
 
-# In[ ]:
-
-
-
-
-
-# In[4]:
 
 if args.repro:
     tmp = np.loadtxt(prior_data_directory + f'{run_nameprior}' + 'post_equal_weights.dat')
@@ -164,15 +159,15 @@ def get_quantiles(array, quantiles=[0.05, 0.5, 0.95]): #0.05,0.5,0.95 0.16,0.5,0
 # In[9]:
 
 
-print('Posteriors 68% ', get_quantiles(matrixp[:,0], quantiles = [0.16,0.5,0.84]) )
-print('Posteriors 95% ', get_quantiles(matrixp[:,0]) )
+print('Priors 68% ', get_quantiles(matrixp[:,0], quantiles = [0.16,0.5,0.84]) )
+print('Priors 95% ', get_quantiles(matrixp[:,0]) )
 
 
 # In[10]:
 
 
-print('Posteriors 68% ', get_quantiles(matrix[:,0], quantiles = [0.16,0.5,0.84]) )
-print('Posteriors 95% ', get_quantiles(matrix[:,0]) )
+print('Posteriors ADM Core Model 68% ', get_quantiles(matrix[:,0], quantiles = [0.16,0.5,0.84]) )
+print('Posteriors ADM Core Model 95% ', get_quantiles(matrix[:,0]) )
 
 
 # In[11]:
@@ -193,12 +188,12 @@ pyplot.rcParams['xtick.top'] = True
 
 fig,ax = pyplot.subplots(figsize = (10,11))
 
-plot = sns.kdeplot(data = matrix,x = matrix[:,0],y = matrix[:,1],shade = True,cbar = False,cmap = 'gray'
+plot = sns.kdeplot(x = matrix[:,0],y = matrix[:,1],fill = True,cbar = False,cmap = 'gray'
                    ,common_norm = True,levels=[0.05,0.32,1.],ax = ax)
 
 
 
-plot_prior = sns.kdeplot(data = matrixp,x = matrixp[:,0],y = matrixp[:,1],shade = False,cbar = False,
+plot_prior = sns.kdeplot(x = matrixp[:,0],y = matrixp[:,1],fill = False,cbar = False,
                    colors = '#377eb8',common_norm = True,levels =[0.05,0.32,1],label = "Prior", linestyles = 'dashed',
                         linewidths = 2.,ax = ax)
 
@@ -239,10 +234,10 @@ figure.savefig(plots_directory + plot_name + 'ratio_plot.png',bbox_inches='tight
 
 
 
-prior_data_directory = '../results/prior/' if not args.repro else f'../repro/prior/{run_nameprior}/'
-posterior_data_directory = '../results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior_incladm_noadm}/'
+prior_data_directory = f'{parent}/results/prior/' if not args.repro else f'{parent}/repro/prior/{run_nameprior}/'
+posterior_data_directory = f'{parent}/results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_VARYING_BARYONIC/' if not args.repro else f'{parent}/repro/posterior/{run_nameposterior_incladm_noadm}/'
 
-plots_directory = '../plots/' 
+plots_directory = f'{parent}/plots/' 
 
 plot_name = 'FERMIONIC_FUTUREX_NO_ADM_MODEL_POSTERIOR_PRIOR_'
 
@@ -305,8 +300,8 @@ for i in range(len(matrixp)):
 # In[17]:
 
 
-print('Posteriors 68% ', get_quantiles(matrix[:,0], quantiles = [0.16,0.5,0.84]) )
-print('Posteriors 95% ', get_quantiles(matrix[:,0]) )
+print('Posteriors No ADM Model 68% ', get_quantiles(matrix[:,0], quantiles = [0.16,0.5,0.84]) )
+print('Posteriors No ADM Model 95% ', get_quantiles(matrix[:,0]) )
 
 
 # In[19]:
@@ -314,12 +309,12 @@ print('Posteriors 95% ', get_quantiles(matrix[:,0]) )
 
 fig,ax = pyplot.subplots(figsize = (10,11))
 
-plot = sns.kdeplot(data = matrix,x = matrix[:,0],y = matrix[:,1],shade = True,cbar = False,cmap = 'gray'
+plot = sns.kdeplot(x = matrix[:,0],y = matrix[:,1],fill = True,cbar = False,cmap = 'gray'
                    ,common_norm = True,levels=[0.05,0.32,1.],ax = ax)
 
 
 
-plot_prior = sns.kdeplot(data = matrixp,x = matrixp[:,0],y = matrixp[:,1],shade = False,cbar = False,
+plot_prior = sns.kdeplot(x = matrixp[:,0],y = matrixp[:,1],fill = False,cbar = False,
                    colors = '#377eb8',common_norm = True,levels =[0.05,0.32,1],label = "Prior", linestyles = 'dashed',
                         linewidths = 2.,ax = ax)
 

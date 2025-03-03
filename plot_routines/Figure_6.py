@@ -19,7 +19,9 @@ import pathlib
 import argparse
 import sys
 
-# In[2]:
+# Paths
+current_path = os.path.dirname(__file__)
+parent = os.path.dirname(current_path)
 
 
 tmp_color = sns.cubehelix_palette(8, start=.5, rot=-.75, dark=0.2, light=.85)[0::3]
@@ -62,12 +64,12 @@ if args.repro:
 
 
 
-plots_directory = '../plots/'
-prior_directory = '../results/prior/' if not args.repro else f'../repro/prior/{run_nameprior}/'
+plots_directory = f'{parent}/plots/'
+prior_directory = f'{parent}/results/prior/' if not args.repro else f'{parent}/repro/prior/{run_nameprior}/'
 
-including_noadmcore_directory = '../results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior_incladm_noadm}/'
+including_noadmcore_directory = f'{parent}/results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_VARYING_BARYONIC/' if not args.repro else f'{parent}/repro/posterior/{run_nameposterior_incladm_noadm}/'
 
-neglecting_noadmcore_directory = '../results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_BARYONIC_ONLY/' if not args.repro else f'../repro/posterior/{run_nameposterior_negladm_noadm}/'
+neglecting_noadmcore_directory = f'{parent}/results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_BARYONIC_ONLY/' if not args.repro else f'{parent}/repro/posterior/{run_nameposterior_negladm_noadm}/'
 
 
 # In[5]:
@@ -256,21 +258,14 @@ pyplot.show()
 fig.savefig(plots_directory + 'FutureX_NO_ADM_core_posteriors.png',bbox_inches='tight')
 
 
-# In[ ]:
 
 
 
+prior_directory = f'{parent}/results/prior/' if not args.repro else f'{parent}/repro/prior/{run_nameprior}/'
 
+including_admcore_directory = f'{parent}/results/posterior/Future-X/ADM_Model/FUTUREX_ADM_VARYING_BARYONIC/' if not args.repro else f'{parent}/repro/posterior/{run_nameposterior_incladm_adm}/'
 
-# In[12]:
-
-
-
-prior_directory = '../results/prior/' if not args.repro else f'../repro/prior/{run_nameprior}/'
-
-including_admcore_directory = '../results/posterior/Future-X/ADM_Model/FUTUREX_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior_incladm_adm}/'
-
-neglecting_admcore_directory = '../results/posterior/Future-X/ADM_Model/FUTUREX_ADM_BARYONIC_ONLY/' if not args.repro else f'../repro/posterior/{run_nameposterior_negladm_adm}/'
+neglecting_admcore_directory = f'{parent}/results/posterior/Future-X/ADM_Model/FUTUREX_ADM_BARYONIC_ONLY/' if not args.repro else f'{parent}/repro/posterior/{run_nameposterior_negladm_adm}/'
 
 
 # In[13]:
@@ -382,9 +377,3 @@ ax[1].set_ylabel(r'Mass [M$_{\odot}$]', fontsize=my_fontsize)
 pyplot.tight_layout()
 pyplot.show()
 fig.savefig(plots_directory + 'FutureX_ADM_core_posteriors.png',bbox_inches='tight')
-
-
-
-
-
-

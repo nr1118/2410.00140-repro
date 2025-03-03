@@ -12,14 +12,16 @@ from matplotlib import pyplot
 import seaborn as sns
 from scipy.stats import gaussian_kde
 from matplotlib.colors import ListedColormap
-
+import corner as corner
 
 import os
 import pathlib
 import argparse
 import sys
 
-# In[2]:
+# Paths
+current_path = os.path.dirname(__file__)
+parent = os.path.dirname(current_path)
 
 
 plt.rcParams['mathtext.fontset'] = 'custom'
@@ -56,16 +58,16 @@ c_baryonic = tmp_color[:2]
 # In[4]:
 
 
-plots_directory = '../plots/'
+plots_directory = f'{parent}/plots/'
 
 
 
 
-prior_directory = f'../results/prior/' if not args.repro else f'../repro/prior/{run_nameprior}/'
+prior_directory = f'{parent}/results/prior/' if not args.repro else f'{parent}/repro/prior/{run_nameprior}/'
 
-including_adm_directory = '../results/posterior/NICER_Real_Data/NICER_REAL_ADM_VARYING_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior_incladm_real}/'
+including_adm_directory = f'{parent}/results/posterior/NICER_Real_Data/NICER_REAL_ADM_VARYING_BARYONIC/' if not args.repro else f'{parent}/repro/posterior/{run_nameposterior_incladm_real}/'
 
-neglecting_adm_directory = '../results/posterior/NICER_Real_Data/NICER_REAL_BARYONIC/' if not args.repro else f'../repro/posterior/{run_nameposterior_negladm_real}/'
+neglecting_adm_directory = f'{parent}/results/posterior/NICER_Real_Data/NICER_REAL_BARYONIC/' if not args.repro else f'{parent}/repro/posterior/{run_nameposterior_negladm_real}/'
 
 
 # In[5]:
@@ -142,13 +144,16 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
                fill=False, ax=ax, levels=[0.05,0.32,1.],bw_adjust = 1.5,
                 alpha=1., colors = '#E76F51',linestyles = '-.',linewidths = 3.)
     
+
     p = kdeadm.collections[0].get_paths()[0]
     v = p.vertices
     ly_95 = max([v[r][1] for r in range(len(v))])
-    
-    p = kdeadm.collections[1].get_paths()[0]
+
+
+    p = kdeadm.collections[0].get_paths()[1]
     v = p.vertices
     ly_68 = max([v[r][1] for r in range(len(v))])
+
     
     
     print('68% Max mass Including ADM: ',ly_68)
@@ -288,7 +293,7 @@ pb = kdeb.collections[0].get_paths()[0]
 vb = pb.vertices
 ly_95 = max([vb[r][1] for r in range(len(vb))])
     
-pb = kdeb.collections[1].get_paths()[0]
+pb = kdeb.collections[0].get_paths()[1]
 vb = pb.vertices
 ly_68 = max([vb[r][1] for r in range(len(vb))])
     
@@ -300,7 +305,6 @@ print('95% Max mass Neglecting ADM: ',ly_95)
 # In[14]:
 
 
-import corner as corner
 
 if args.repro:
     pressure_NICER_ADM = np.load(including_adm_directory + f'{run_nameposterior_incladm_real}' + 'pressures.npy')

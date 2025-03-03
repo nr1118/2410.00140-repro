@@ -18,6 +18,9 @@ import pathlib
 import argparse
 import sys
 
+# Paths
+current_path = os.path.dirname(__file__)
+parent = os.path.dirname(current_path)
 
 
 # In[3]:
@@ -40,9 +43,9 @@ pyplot.rcParams['xtick.top'] = True
 # In[4]:
 
 
-data_directory = '../data/'
+data_directory = f'{parent}/data/'
 
-plots_directory = '../plots/' 
+plots_directory = f'{parent}/plots/' 
 
 
 # In[5]:
@@ -156,25 +159,6 @@ sigM6_noADMstrobex = muM6_noADMstrobex * 0.02        #2% uncertainty
 sigR6_noADMstrobex = muR6_noADMstrobex * 0.02        #2% uncertainty in radius 
 
 
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[8]:
 
 
 
@@ -299,34 +283,4 @@ ax_baseline.fill(J0030_R19_STPST_R_68, J0030_R19_STPST_M_68, linewidth=2.0, colo
 ax_baseline.fill(J0740_R21_STU_R_95, J0740_R21_STU_M_95, linewidth=2.0, color='xkcd:light violet', alpha=0.4)
 ax_baseline.fill(J0740_R21_STU_R_68, J0740_R21_STU_M_68, linewidth=2.0, color='xkcd:light violet', alpha=0.8)
 fig.savefig(plots_directory + 'MRdata.png',bbox_inches='tight')
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
 

@@ -19,6 +19,9 @@ import pathlib
 import argparse
 import sys
 
+# Paths
+current_path = os.path.dirname(__file__)
+parent = os.path.dirname(current_path)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-r', '--repro', action='store_true')
@@ -50,8 +53,8 @@ rho_ns = global_imports._rhons
 # In[3]:
 
 
-plots_directory = '../plots/'
-data_directory = '../results/prior/Appendix_B/' if not args.repro else f'../repro/{run_nameappendix}/'
+plots_directory = f'{parent}/plots/'
+data_directory = f'{parent}/results/prior/Appendix_B/' if not args.repro else f'{parent}/repro/{run_nameappendix}/'
 
 
 # In[4]:
@@ -145,13 +148,13 @@ X, Y = np.meshgrid(mchi_array, fchi_array)
 pos1 = ax.pcolormesh(X, Y, Array.T,shading ='gouraud',cmap='viridis') #shading ='gouraud' used for pcolormesh
 pos1.set_clim(0.0,.004)
 cbar = fig.colorbar(pos1, ax=ax,ticks = [0.,.001,.002,.003,.004])
-cbar.set_label('RRPD [$\%$]',rotation = 90,labelpad = 25,fontsize=24)
+cbar.set_label(r'RRPD [$\%$]',rotation = 90,labelpad = 25,fontsize=24)
 cbar.ax.tick_params(labelsize=22)
-ax.set_ylabel('F$_\chi \, [\%]$',fontsize=28)
+ax.set_ylabel(r'F$_\chi \, [\%]$',fontsize=28)
 ax.set_xticks([1000,1500,2000,2500,3000,3500,4000])
-ax.set_xlabel('m$_\chi \, [\mathrm{MeV}]$',fontsize=28)
+ax.set_xlabel(r'm$_\chi \, [\mathrm{MeV}]$',fontsize=28)
 ax.tick_params(axis='both', which='major', labelsize=22)
-ax.set_title('Intermediately Stiff EoS',fontsize = 24)
+ax.set_title(r'Intermediately Stiff EoS',fontsize = 24)
 pyplot.savefig(plots_directory + 'Percent_diff_intermediate_stiff_plot.png')
 pyplot.show()
 
@@ -187,13 +190,13 @@ X, Y = np.meshgrid(mchi_array, fchi_array)
 pos1 = ax.pcolormesh(X, Y, Array.T,shading ='gouraud',cmap='viridis') #shading ='gouraud' used for pcolormesh
 pos1.set_clim(0.0,.004)
 cbar = fig.colorbar(pos1, ax=ax,ticks = [0.,.001,.002,.003,.004])
-cbar.set_label('RRPD [$\%$]',rotation = 90,labelpad = 25,fontsize=24)
+cbar.set_label(r'RRPD [$\%$]',rotation = 90,labelpad = 25,fontsize=24)
 cbar.ax.tick_params(labelsize=22)
-ax.set_ylabel('F$_\chi \, [\%]$',fontsize=28)
-ax.set_xlabel('m$_\chi \, [\mathrm{MeV}]$',fontsize=28)
+ax.set_ylabel(r'F$_\chi \, [\%]$',fontsize=28)
+ax.set_xlabel(r'm$_\chi \, [\mathrm{MeV}]$',fontsize=28)
 ax.tick_params(axis='both', which='major', labelsize=22)
 ax.set_xticks([1000,1500,2000,2500,3000,3500,4000])
-ax.set_title('Intermediately Stiff EoS with $\Delta m_\chi = 100$ MeV',fontsize = 24)
+ax.set_title(r'Intermediately Stiff EoS with $\Delta m_\chi = 100$ MeV',fontsize = 24)
 pyplot.savefig(plots_directory + 'Percent_diff_intermediate_stiff_plot_newmchistep.png')
 pyplot.show()
 
@@ -227,13 +230,13 @@ X, Y = np.meshgrid(mchi_array, fchi_array)
 pos1 = ax.pcolormesh(X, Y, Array.T,shading ='gouraud',cmap='viridis') #shading ='gouraud' used for pcolormesh
 pos1.set_clim(0.0,.004)
 cbar = fig.colorbar(pos1, ax=ax,ticks = [0.,.001,.002,.003,.004])
-cbar.set_label('RRPD [$\%$]',rotation = 90,labelpad = 25,fontsize=24)
+cbar.set_label(r'RRPD [$\%$]',rotation = 90,labelpad = 25,fontsize=24)
 cbar.ax.tick_params(labelsize=22)
-ax.set_ylabel('F$_\chi \, [\%]$',fontsize=28)
-ax.set_xlabel('m$_\chi \, [\mathrm{MeV}]$',fontsize=28)
+ax.set_ylabel(r'F$_\chi \, [\%]$',fontsize=28)
+ax.set_xlabel(r'm$_\chi \, [\mathrm{MeV}]$',fontsize=28)
 ax.tick_params(axis='both', which='major', labelsize=22)
 ax.set_xticks([1000,1500,2000,2500,3000,3500,4000])
-ax.set_title('Intermediately Stiff EoS with $\Delta F_\chi = 0.05 \%$',fontsize = 24)
+ax.set_title(r'Intermediately Stiff EoS with $\Delta F_\chi = 0.05 \%$',fontsize = 24)
 pyplot.savefig(plots_directory + 'Percent_diff_intermediate_stiff_plot_newfchistep.png')
 pyplot.show()
 
@@ -268,13 +271,13 @@ X, Y = np.meshgrid(mchi_array, fchi_array)
 pos1 = ax.pcolormesh(X, Y, Array.T,shading ='gouraud',cmap='viridis') #shading ='gouraud' used for pcolormesh
 pos1.set_clim(0.0,.004)
 cbar = fig.colorbar(pos1, ax=ax,ticks = [0.,.001,.002,.003,.004])
-cbar.set_label('RRPD [$\%$]',rotation = 90,labelpad = 25,fontsize=24)
+cbar.set_label(r'RRPD [$\%$]',rotation = 90,labelpad = 25,fontsize=24)
 cbar.ax.tick_params(labelsize=22)
-ax.set_ylabel('F$_\chi \, [\%]$',fontsize=28)
-ax.set_xlabel('m$_\chi \, [\mathrm{MeV}]$',fontsize=28)
+ax.set_ylabel(r'F$_\chi \, [\%]$',fontsize=28)
+ax.set_xlabel(r'm$_\chi \, [\mathrm{MeV}]$',fontsize=28)
 ax.tick_params(axis='both', which='major', labelsize=22)
 ax.set_xticks([1000,1500,2000,2500,3000,3500,4000])
-ax.set_title('Soft EoS',fontsize = 24)
+ax.set_title(r'Soft EoS',fontsize = 24)
 pyplot.savefig(plots_directory + 'Percent_diff_soft_plot.png')
 pyplot.show()
 
@@ -308,13 +311,13 @@ X, Y = np.meshgrid(mchi_array, fchi_array)
 pos1 = ax.pcolormesh(X, Y, Array.T,shading ='gouraud',cmap='viridis') #shading ='gouraud' used for pcolormesh
 pos1.set_clim(0.0,.004)
 cbar = fig.colorbar(pos1, ax=ax,ticks = [0.,.001,.002,.003,.004])
-cbar.set_label('RRPD [$\%$]',rotation = 90,labelpad = 25,fontsize=24)
+cbar.set_label(r'RRPD [$\%$]',rotation = 90,labelpad = 25,fontsize=24)
 cbar.ax.tick_params(labelsize=22)
-ax.set_ylabel('F$_\chi \, [\%]$',fontsize=28)
-ax.set_xlabel('m$_\chi \, [\mathrm{MeV}]$',fontsize=28)
+ax.set_ylabel(r'F$_\chi \, [\%]$',fontsize=28)
+ax.set_xlabel(r'm$_\chi \, [\mathrm{MeV}]$',fontsize=28)
 ax.tick_params(axis='both', which='major', labelsize=22)
 ax.set_xticks([1000,1500,2000,2500,3000,3500,4000])
-ax.set_title('Stiff EoS',fontsize = 24)
+ax.set_title(r'Stiff EoS',fontsize = 24)
 pyplot.savefig(plots_directory + 'Percent_diff_stiff_plot.png')
 pyplot.show()
 

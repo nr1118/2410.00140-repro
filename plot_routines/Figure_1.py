@@ -37,9 +37,13 @@ if args.repro:
     
 plot_name = 'FERMIONIC_PRIOR_'
 
-data_directory = '../results/prior/' if not args.repro else f'../repro/prior/{run_name}/'
+# Paths
+current_path = os.path.dirname(__file__)
+parent = os.path.dirname(current_path)
 
-plots_directory = '../plots/' 
+data_directory = f'{parent}/results/prior/' if not args.repro else f'{parent}/repro/prior/{run_name}/'
+
+plots_directory = f'{parent}/plots/' 
 
 
 
