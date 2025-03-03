@@ -51,7 +51,7 @@ printf "$cmd\n"
 $cmd
 
 printf "\nFig. 7\n"
-cmd="python plot_routines/Figure_7_and_8.py $optional_args" # -r / -name_prior / -name_appendix
+cmd="python plot_routines/Figures_7_and_8.py $optional_args" # -r / -name_prior / -name_appendix
 printf "$cmd\n"
 $cmd
 
