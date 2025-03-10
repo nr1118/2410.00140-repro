@@ -92,10 +92,9 @@ results_directory = '../../repro/{run_name}/' #back one less since prior is only
 pathlib.Path(results_directory).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
 
 # Then we start the sampling, note the greatly increased number of livepoints compared to the posterior files, this is required because each livepoint terminates after 1 iteration
-#Although this work used 15k live points for the prior, it may be worth (depending on computational resources) to 
-#change 15k ---> 30k to better sample the prior.  
+#Although this work used 30k live points for the prior, it is possible to use more live points (depending on computational resources).  
 start = time.time()
-result = solve(LogLikelihood=likelihood.loglike_prior, Prior=prior.inverse_sample, n_live_points=15000, evidence_tolerance=0.1,
+result = solve(LogLikelihood=likelihood.loglike_prior, Prior=prior.inverse_sample, n_live_points=30000, evidence_tolerance=0.1,
                n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=results_directory + run_name, verbose=True)
 end = time.time()
 print(end - start)

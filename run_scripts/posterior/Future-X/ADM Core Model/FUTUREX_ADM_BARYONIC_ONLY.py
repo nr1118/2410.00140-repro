@@ -119,7 +119,7 @@ results_directory = '../../../../repro/{run_name}/' #back one extra due to one m
 pathlib.Path(results_directory).mkdir(parents=True, exist_ok=True) # Create the directory if it doesn't exist
 
 start = time.time()
-result = solve(LogLikelihood=likelihood.call, Prior=prior.inverse_sample, n_live_points=2000, evidence_tolerance=0.1,
+result = solve(LogLikelihood=likelihood.call, Prior=prior.inverse_sample, n_live_points=3000, evidence_tolerance=0.1,
                n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=results_directory + run_name, verbose=True)
 end = time.time()
 print(end - start)

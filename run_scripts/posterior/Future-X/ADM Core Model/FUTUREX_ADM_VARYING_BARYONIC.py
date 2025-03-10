@@ -105,7 +105,7 @@ print("number of parameters is %d" %len(variable_params))
 
 ## TESTING ##
 print("Testing prior and likelihood")
-cube = numpy.random.rand(50, len(variable_params))
+cube = np.random.rand(50, len(variable_params))
 for i in range(len(cube)):
     par = prior.inverse_sample(cube[i])
     print(likelihood.call(par))
@@ -119,7 +119,7 @@ pathlib.Path(results_directory).mkdir(parents=True, exist_ok=True) # Create the 
 
 
 start = time.time()
-result = solve(LogLikelihood=likelihood.call, Prior=prior.inverse_sample, n_live_points=2000, evidence_tolerance=0.1,
+result = solve(LogLikelihood=likelihood.call, Prior=prior.inverse_sample, n_live_points=3000, evidence_tolerance=0.1,
                n_dims=len(variable_params), sampling_efficiency=0.8, outputfiles_basename=results_directory + run_name, verbose=True)
 end = time.time()
 print(end - start)
