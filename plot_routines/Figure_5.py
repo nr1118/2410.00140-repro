@@ -221,7 +221,7 @@ ax.minorticks_on()
 
 
 
-figure.savefig(plots_directory + plot_name + 'ratio_plot.png',bbox_inches='tight')
+fig.savefig(plots_directory + plot_name + 'ratio_plot.png',bbox_inches='tight')
 
 
 # In[ ]:
@@ -335,7 +335,7 @@ ax.minorticks_on()
 
 
 
-figure.savefig(plots_directory + plot_name + 'ratio_plot.png',bbox_inches='tight')
+fig.savefig(plots_directory + plot_name + 'ratio_plot.png',bbox_inches='tight')
 
 
 
