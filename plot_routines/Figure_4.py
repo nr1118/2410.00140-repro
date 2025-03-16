@@ -104,6 +104,16 @@ def calc_bands(x, y):
     return miny, maxy
 
 
+def get_quantiles(array, quantiles=[0.05, 0.5, 0.95]): #0.05,0.5,0.95 0.32,0.5,0.68 
+        contours = np.nanquantile(array, quantiles) #changed to nanquantile to inorder to ignore the nans that may appear
+        low = contours[0]
+        median = contours[1]
+        high = contours[2]
+        minus = low
+        plus = high
+        return np.round(median,2),np.round(plus,2),np.round(minus,2) 
+
+
 # In[7]:
 
 
@@ -145,19 +155,10 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
                 alpha=1., colors = '#E76F51',linestyles = '-.',linewidths = 3.)
     
 
-    p = kdeadm.collections[0].get_paths()[0]
-    v = p.vertices
-    ly_95 = max([v[r][1] for r in range(len(v))])
-
-
-    p = kdeadm.collections[0].get_paths()[1]
-    v = p.vertices
-    ly_68 = max([v[r][1] for r in range(len(v))])
-
-    
-    
-    print('68% Max mass Including ADM: ',ly_68)
-    print('95% Max mass Including ADM: ',ly_95)
+    ly_68adm = get_quantiles(MR_ADM[:,0], quantile = [0.32,0.5,0.64])
+    ly_95adm = get_quantiles(MR_ADM[:,0], quantile = [0.05,0.5,0.95])
+    print('68% Max mass Including ADM: ',ly_68adm[2]) #upper bound only
+    print('95% Max mass Including ADM: ',ly_95adm[2])
 
     if root_prior is not None:
         MR_prior = np.loadtxt(root_prior + 'MR_prpr.txt')
@@ -170,7 +171,10 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
 
     MR_prpr_B= np.loadtxt(root_name_Baryonic + 'MR_prpr.txt')
     
-
+    ly_68 = get_quantiles(MR_prpr_B[:,0], quantile = [0.32,0.5,0.64])
+    ly_95 = get_quantiles(MR_prpr_B[:,0], quantile = [0.05,0.5,0.95])
+    print('68% Max mass Neglecting ADM: ',ly_68[2])
+    print('95% Max mass Neglecting ADM: ',ly_95[2])
 
     kdeb = sns.kdeplot(x = MR_prpr_B[:,1], y = MR_prpr_B[:,0], gridsize=40,bw_adjust = 1.5, 
                 fill=True, ax=ax, levels=[0.05,0.32,1.],
@@ -271,96 +275,56 @@ pyplot.show()
 fig.savefig(plots_directory + 'Real_data_posterior.png',bbox_inches='tight')
 
 
-# ## We needed to re-insert the sns contours for the Neglecting ADM contours here since the above code will print the Including ADM bands. Also note, that we needed to use sns.kde intervals over the corner quantiles (or equivalently get_quantiles function) because of the bw_adjust and gridsize arguments, which modify the 95% & 68% contours slightly.
-
-# In[13]:
 
 
-#Baryonic (Neglecting ADM)
-
-if args.repro:
-    root_name_B = neglecting_adm_directory + f'{run_nameposterior_negladm_real}'
-else:
-    root_name_B = neglecting_adm_directory + 'NICER_REAL_BARYONIC_'
-
-MR_prpr_B= np.loadtxt(root_name_B + 'MR_prpr.txt')
-figure, ax = pyplot.subplots(1,1, figsize=(9,6))
-kdeb = sns.kdeplot(x = MR_prpr_B[:,1], y = MR_prpr_B[:,0], gridsize=40,bw_adjust = 1.5, 
-            fill=True, ax=ax, levels=[0.05,0.32,1.],
-                alpha=1., cmap=ListedColormap(c_baryonic))
-    
-pb = kdeb.collections[0].get_paths()[0]
-vb = pb.vertices
-ly_95 = max([vb[r][1] for r in range(len(vb))])
-    
-pb = kdeb.collections[0].get_paths()[1]
-vb = pb.vertices
-ly_68 = max([vb[r][1] for r in range(len(vb))])
-    
-    
-print('68% Max mass Neglecting ADM: ',ly_68)
-print('95% Max mass Neglecting ADM: ',ly_95)
-
-
-# In[14]:
-
-
-
-if args.repro:
-    pressure_NICER_ADM = np.load(including_adm_directory + f'{run_nameposterior_incladm_real}' + 'pressures.npy')
-    pressure_NICER_no_ADM =  np.load(neglecting_adm_directory + f'{run_nameposterior_negladm_real}' + 'pressures.npy')
-else:
-    pressure_NICER_ADM = np.load(including_adm_directory + 'NICER_REAL_ADM_VARYING_BARYONIC_pressures.npy')
-    pressure_NICER_no_ADM = np.load(neglecting_adm_directory + 'NICER_REAL_BARYONIC_pressures.npy')
 
 
 # In[15]:
 
 
-j = 5
-k = 22
-energydensities = np.logspace(14.2, 16, 50)
-print(np.log10(energydensities[j]))
-
-print(np.log10(energydensities[k]))
+j = 25
+k = 112
 
 
-# In[16]:
+# minpres_adm = np.log10(adm_contours_min)
+# maxpres_adm = np.log10(adm_contours_max)
+
+# minpres_ppNI = np.log10(contours_min)
+# maxpres_ppNI = np.log10(contours_max)
+
+energydensities = minpres_adm[:,0] #could also be maxpres_adm doesn't matter which
+
+print('energy densities evaluated: ',energydensities[j], energydensities[k])
 
 
-ADM = corner.quantile(pressure_NICER_ADM[j], (0.05,0.5,0.95), weights=None)
 
-W_ADM = ADM[2]-ADM[0]
+W_ADM = maxpres_ADM[:,2][j] - minpres_ADM[:,2][j]
 
 
-noADM = corner.quantile(pressure_NICER_no_ADM[j], (0.05,0.5,0.95), weights=None)
+#no ADM bands need to be recomputed for energydensities = np.logspace(14.2,16,250)!! Do Monday
 
-W_noADM = noADM[2]-noADM[0]
+W_noADM = maxpres_ppNI[:,2][j] - minpres_ppNI[:,2][j]
 
-print('95% Confidence Including ADM: ', ADM)
+print('95% Confidence Including ADM: ', minpres_adm[:,2][j], maxpres_adm[:,2][j])
       
-print('95% Confidence Neglecting ADM: ', noADM)
+print('95% Confidence Neglecting ADM: ', minpres_ppNI[:,2][j],maxpres_ppNI[:,2][j])
 
 Percent_change_ADM = ((W_ADM-W_noADM)/W_noADM)*100
 
 print('Percent diff: ', Percent_change_ADM)
 
 
-# In[17]:
+
+W_ADM = maxpres_ADM[:,2][k] - minpres_ADM[:,2][k]
 
 
-ADM = corner.quantile(pressure_NICER_ADM[k], (0.05,0.5,0.95), weights=None)
+#no ADM bands need to be recomputed for energydensities = np.logspace(14.2,16,250)!! Do Monday
 
-W_ADM = ADM[2]-ADM[0]
+W_noADM = maxpres_ppNI[:,2][k] - minpres_ppNI[:,2][k]
 
-
-noADM = corner.quantile(pressure_NICER_no_ADM[k], (0.05,0.5,0.95), weights=None)
-
-W_noADM = noADM[2]-noADM[0]
-
-print('95% Confidence Including ADM: ', ADM)
+print('95% Confidence Including ADM: ', minpres_adm[:,2][k], maxpres_adm[:,2][k])
       
-print('95% Confidence Neglecting ADM: ', noADM)
+print('95% Confidence Neglecting ADM: ', minpres_ppNI[:,2][k],maxpres_ppNI[:,2][k])
 
 Percent_change_ADM = ((W_ADM-W_noADM)/W_noADM)*100
 

@@ -106,7 +106,14 @@ def calc_bands(x, y):
     return miny, maxy
 
 
-# In[7]:
+def get_quantiles(array, quantiles=[0.05, 0.5, 0.95]): #0.05,0.5,0.95 0.32,0.5,0.68
+        contours = np.nanquantile(array, quantiles) #changed to nanquantile to inorder to ignore the nans that may appear
+        low = contours[0]
+        median = contours[1]
+        high = contours[2]
+        minus = low - median
+        plus = high - median
+        return np.round(median,2),np.round(plus,2),np.round(minus,2) 
 
 
 energydensities = np.logspace(14.2, 16, 50)

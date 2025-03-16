@@ -53,7 +53,14 @@ plots_directory = f'{parent}/plots/'
 
 
 
-# In[ ]:
+def get_quantiles(array, quantiles=[0.05, 0.5, 0.95]): #0.05,0.5,0.95 0.32,0.5,0.68
+        contours = np.nanquantile(array, quantiles) #changed to nanquantile to inorder to ignore the nans that may appear
+        low = contours[0]
+        median = contours[1]
+        high = contours[2]
+        minus = low - median
+        plus = high - median
+        return np.round(median,2),np.round(plus,2),np.round(minus,2) 
 
 
 
@@ -143,30 +150,19 @@ for i in range(len(matrixp)):
     matrixp[i] = np.log10(gchi_over_mphi_prior[i]/mchi_prior[i]),Fchi_prior[i]
 
 
-# In[8]:
-
-
-def get_quantiles(array, quantiles=[0.05, 0.5, 0.95]): #0.05,0.5,0.95 0.16,0.5,0.84
-        contours = np.nanquantile(array, quantiles) #changed to nanquantile to inorder to ignore the nans that may appear
-        low = contours[0]
-        median = contours[1]
-        high = contours[2]
-        minus = low - median
-        plus = high - median
-        return np.round(median,2),np.round(plus,2),np.round(minus,2) 
 
 
 # In[9]:
 
 
-print('Priors 68% ', get_quantiles(matrixp[:,0], quantiles = [0.16,0.5,0.84]) )
+print('Priors 68% ', get_quantiles(matrixp[:,0], quantiles = [0.32,0.5,0.68]) )
 print('Priors 95% ', get_quantiles(matrixp[:,0]) )
 
 
 # In[10]:
 
 
-print('Posteriors 68% ', get_quantiles(matrix[:,0], quantiles = [0.16,0.5,0.84]) )
+print('Posteriors 68% ', get_quantiles(matrix[:,0], quantiles = [0.32,0.5,0.68]) )
 print('Posteriors 95% ', get_quantiles(matrix[:,0]) )
 
 
