@@ -104,7 +104,7 @@ def calc_bands(x, y):
     return miny, maxy
 
 
-def get_quantiles(array, quantiles=[0.05, 0.5, 0.95]): #0.05,0.5,0.95 0.32,0.5,0.68 
+def get_quantiles(array, quantiles=[0.025, 0.5, 0.975]): #0.025,0.5,0.975 0.16,0.5,0.84 
         contours = np.nanquantile(array, quantiles) #changed to nanquantile to inorder to ignore the nans that may appear
         low = contours[0]
         median = contours[1]
@@ -117,7 +117,7 @@ def get_quantiles(array, quantiles=[0.05, 0.5, 0.95]): #0.05,0.5,0.95 0.32,0.5,0
 # In[7]:
 
 
-energydensities = np.logspace(14.2, 16, 50)
+energydensities = np.logspace(14.2, 16, 250)
 if args.repro:
     pressures_prior =  np.load(prior_directory + f'{run_nameprior}' + 'pressures.npy')
     maxpres_adm_NI = np.load(including_adm_directory + f'{run_nameposterior_incladm_real}'+'maxpres.npy')
@@ -155,8 +155,8 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
                 alpha=1., colors = '#E76F51',linestyles = '-.',linewidths = 3.)
     
 
-    ly_68adm = get_quantiles(MR_ADM[:,0], quantile = [0.32,0.5,0.64])
-    ly_95adm = get_quantiles(MR_ADM[:,0], quantile = [0.05,0.5,0.95])
+    ly_68adm = get_quantiles(MR_ADM[:,0], quantiles = [0.16,0.5,0.84])
+    ly_95adm = get_quantiles(MR_ADM[:,0], quantiles = [0.025,0.5,0.975])
     print('68% Max mass Including ADM: ',ly_68adm[2]) #upper bound only
     print('95% Max mass Including ADM: ',ly_95adm[2])
 
@@ -171,8 +171,8 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
 
     MR_prpr_B= np.loadtxt(root_name_Baryonic + 'MR_prpr.txt')
     
-    ly_68 = get_quantiles(MR_prpr_B[:,0], quantile = [0.32,0.5,0.64])
-    ly_95 = get_quantiles(MR_prpr_B[:,0], quantile = [0.05,0.5,0.95])
+    ly_68 = get_quantiles(MR_prpr_B[:,0], quantiles = [0.16,0.5,0.84])
+    ly_95 = get_quantiles(MR_prpr_B[:,0], quantiles = [0.025,0.5,0.975])
     print('68% Max mass Neglecting ADM: ',ly_68[2])
     print('95% Max mass Neglecting ADM: ',ly_95[2])
 
@@ -292,43 +292,43 @@ k = 112
 # minpres_ppNI = np.log10(contours_min)
 # maxpres_ppNI = np.log10(contours_max)
 
-energydensities = minpres_adm[:,0] #could also be maxpres_adm doesn't matter which
+# energydensities = minpres_adm[:,0] #could also be maxpres_adm doesn't matter which
 
-print('energy densities evaluated: ',energydensities[j], energydensities[k])
-
-
-
-W_ADM = maxpres_ADM[:,2][j] - minpres_ADM[:,2][j]
+# print('energy densities evaluated: ',energydensities[j], energydensities[k])
 
 
-#no ADM bands need to be recomputed for energydensities = np.logspace(14.2,16,250)!! Do Monday
 
-W_noADM = maxpres_ppNI[:,2][j] - minpres_ppNI[:,2][j]
+# W_ADM = maxpres_ADM[:,2][j] - minpres_ADM[:,2][j]
 
-print('95% Confidence Including ADM: ', minpres_adm[:,2][j], maxpres_adm[:,2][j])
+
+# #no ADM bands need to be recomputed for energydensities = np.logspace(14.2,16,250)!! Do Monday
+
+# W_noADM = maxpres_ppNI[:,2][j] - minpres_ppNI[:,2][j]
+
+# print('95% Confidence Including ADM: ', minpres_adm[:,2][j], maxpres_adm[:,2][j])
       
-print('95% Confidence Neglecting ADM: ', minpres_ppNI[:,2][j],maxpres_ppNI[:,2][j])
+# print('95% Confidence Neglecting ADM: ', minpres_ppNI[:,2][j],maxpres_ppNI[:,2][j])
 
-Percent_change_ADM = ((W_ADM-W_noADM)/W_noADM)*100
+# Percent_change_ADM = ((W_ADM-W_noADM)/W_noADM)*100
 
-print('Percent diff: ', Percent_change_ADM)
-
-
-
-W_ADM = maxpres_ADM[:,2][k] - minpres_ADM[:,2][k]
+# print('Percent diff: ', Percent_change_ADM)
 
 
-#no ADM bands need to be recomputed for energydensities = np.logspace(14.2,16,250)!! Do Monday
 
-W_noADM = maxpres_ppNI[:,2][k] - minpres_ppNI[:,2][k]
+# W_ADM = maxpres_ADM[:,2][k] - minpres_ADM[:,2][k]
 
-print('95% Confidence Including ADM: ', minpres_adm[:,2][k], maxpres_adm[:,2][k])
+
+# #no ADM bands need to be recomputed for energydensities = np.logspace(14.2,16,250)!! Do Monday
+
+# W_noADM = maxpres_ppNI[:,2][k] - minpres_ppNI[:,2][k]
+
+# print('95% Confidence Including ADM: ', minpres_adm[:,2][k], maxpres_adm[:,2][k])
       
-print('95% Confidence Neglecting ADM: ', minpres_ppNI[:,2][k],maxpres_ppNI[:,2][k])
+# print('95% Confidence Neglecting ADM: ', minpres_ppNI[:,2][k],maxpres_ppNI[:,2][k])
 
-Percent_change_ADM = ((W_ADM-W_noADM)/W_noADM)*100
+# Percent_change_ADM = ((W_ADM-W_noADM)/W_noADM)*100
 
-print('Percent diff: ', Percent_change_ADM)
+# print('Percent diff: ', Percent_change_ADM)
 
 
 

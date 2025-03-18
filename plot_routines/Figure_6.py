@@ -106,7 +106,7 @@ def calc_bands(x, y):
     return miny, maxy
 
 
-def get_quantiles(array, quantiles=[0.05, 0.5, 0.95]): #0.05,0.5,0.95 0.32,0.5,0.68
+def get_quantiles(array, quantiles=[0.025, 0.5, 0.975]): #0.025,0.5,0.975 0.16,0.5,0.84
         contours = np.nanquantile(array, quantiles) #changed to nanquantile to inorder to ignore the nans that may appear
         low = contours[0]
         median = contours[1]
@@ -116,7 +116,7 @@ def get_quantiles(array, quantiles=[0.05, 0.5, 0.95]): #0.05,0.5,0.95 0.32,0.5,0
         return np.round(median,2),np.round(plus,2),np.round(minus,2) 
 
 
-energydensities = np.logspace(14.2, 16, 50)
+energydensities = np.logspace(14.2, 16, 250)
 
 if args.repro:
     pressures_prior =  np.load(prior_directory + f'{run_nameprior}' + 'pressures.npy')
@@ -278,7 +278,7 @@ neglecting_admcore_directory = f'{parent}/results/posterior/Future-X/ADM_Model/F
 # In[13]:
 
 
-energydensities = np.logspace(14.2, 16, 50)
+energydensities = np.logspace(14.2, 16, 250)
 
 if args.repro:
     pressures_prior =  np.load(prior_directory + f'{run_nameprior}' + 'pressures.npy')
