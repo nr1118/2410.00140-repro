@@ -155,10 +155,21 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
                 alpha=1., colors = '#E76F51',linestyles = '-.',linewidths = 3.)
     
 
-    ly_68adm = get_quantiles(MR_ADM[:,0], quantiles = [0.16,0.5,0.84])
-    ly_95adm = get_quantiles(MR_ADM[:,0], quantiles = [0.025,0.5,0.975])
-    print('68% Max mass Including ADM: ',ly_68adm[2] + ly_68adm[1]) #upper bound only
-    print('95% Max mass Including ADM: ',ly_95adm[2] + ly_95adm[1])
+    #Different approach to computing the 68% and 95% CI for MR posteriors due to the 
+    # bw_adjust and gridsize arguments, which in-turn slight smooth out the 68% and 95% compared to get quantiles.
+    p = kdeadm.collections[0].get_paths()[0]
+    v = p.vertices
+    ly_95 = max([v[r][1] for r in range(len(v))])
+
+
+    p = kdeadm.collections[0].get_paths()[1]
+    v = p.vertices
+    ly_68 = max([v[r][1] for r in range(len(v))])
+
+    
+    
+    print('68% Max mass Including ADM: ',ly_68)
+    print('95% Max mass Including ADM: ',ly_95)
 
     if root_prior is not None:
         MR_prior = np.loadtxt(root_prior + 'MR_prpr.txt')
@@ -171,10 +182,6 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
 
     MR_prpr_B= np.loadtxt(root_name_Baryonic + 'MR_prpr.txt')
     
-    ly_68 = get_quantiles(MR_prpr_B[:,0], quantiles = [0.16,0.5,0.84])
-    ly_95 = get_quantiles(MR_prpr_B[:,0], quantiles = [0.025,0.5,0.975])
-    print('68% Max mass Neglecting ADM: ',ly_68[2] + ly_68[1])
-    print('95% Max mass Neglecting ADM: ',ly_95[2]+ ly_95[1])
 
     kdeb = sns.kdeplot(x = MR_prpr_B[:,1], y = MR_prpr_B[:,0], gridsize=40,bw_adjust = 1.5, 
                 fill=True, ax=ax, levels=[0.05,0.32,1.],
@@ -194,7 +201,33 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
     
 
 
-# In[10]:
+#Baryonic (Neglecting ADM)
+
+#Different approach to computing the 68% and 95% CI for MR posteriors due to the 
+# bw_adjust and gridsize arguments, which in-turn slight smooth out the 68% and 95% compared to get quantiles.
+
+if args.repro:
+    root_name_B = neglecting_adm_directory + f'{run_nameposterior_negladm_real}'
+else:
+    root_name_B = neglecting_adm_directory + 'NICER_REAL_BARYONIC_'
+
+MR_prpr_B= np.loadtxt(root_name_B + 'MR_prpr.txt')
+figure, ax = pyplot.subplots(1,1, figsize=(9,6))
+kdeb = sns.kdeplot(x = MR_prpr_B[:,1], y = MR_prpr_B[:,0], gridsize=40,bw_adjust = 1.5, 
+            fill=True, ax=ax, levels=[0.05,0.32,1.],
+                alpha=1., cmap=ListedColormap(c_baryonic))
+    
+pb = kdeb.collections[0].get_paths()[0]
+vb = pb.vertices
+ly_95 = max([vb[r][1] for r in range(len(vb))])
+    
+pb = kdeb.collections[0].get_paths()[1]
+vb = pb.vertices
+ly_68 = max([vb[r][1] for r in range(len(vb))])
+    
+    
+print('68% Max mass Neglecting ADM: ',ly_68)
+print('95% Max mass Neglecting ADM: ',ly_95)
 
 if args.repro:
     root_name_ADM = including_adm_directory + f'{run_nameposterior_incladm_real}'
