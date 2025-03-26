@@ -301,11 +301,7 @@ for i in range(len(matrixp)):
     matrixp[i] = np.log10(gchi_over_mphi_prior[i]/mchi_prior[i]),Fchi_prior[i]
 
 
-# In[17]:
 
-
-print('Posteriors No ADM Model 68% ', get_quantiles(matrix[:,0], quantiles = [0.16,0.5,0.84]) )
-print('Posteriors No ADM Model 95% ', get_quantiles(matrix[:,0]) )
 
 
 # In[19]:
