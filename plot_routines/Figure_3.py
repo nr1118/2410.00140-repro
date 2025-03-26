@@ -106,13 +106,14 @@ for i in range(len(mchi)):
     Matrix[i] =np.log10(mchi[i]),np.log10(gchi_over_mphi[i]),Fchi[i]
 
     
-    
+ 
 ell = corner.corner(Matrix_prior,smooth = 1.0,color = '#377eb8',group = 'prior',range = [(1,9),(-5,3),(0,1.7)],
                    plot_datapoints = False,plot_density = True,plot_contours = True,divergences = False,
                     hist_kwargs = {'linestyle': '--','linewidth': 2.0}, contour_kwargs = {'linestyles':'dashed','linewidths': 2.0})
 
-
-figure = corner.corner(Matrix,smooth = 1.0,fig = ell,labels = [r"log$_{10}$(m$_\chi$/MeV)",r"log$_{10}$($\frac{\mathdefault{g}_\chi}{\mathdefault{m}_\phi/MeV})$",r"F$_\chi$ [%]"],
+#Here we are simply stacking the Matrix posteriors to get the priors and posteriors to show up together in the corner plot (really in the 1-D histograms)
+Matrix = np.vstack((Matrix,Matrix))
+figure = corner.corner(Matrix,smooth = 1.0,fig = ell,labels = [r"log$_{10}$(m$_\chi$/MeV)",r"log$_{10}$($\frac{\mathdefault{g}_\chi}{\mathdefault{m}_\phi/\mathrm{MeV}}$)",r"F$_\chi$ [%]"],
                       range = [(1,9),(-5,3),(0,1.7)], show_titles = True,label_kwargs = {"fontsize":18,"font":'serif'},title_kwargs = {"fontsize":15})
 figure.subplots_adjust(right=1.15,top=1.15)
 
