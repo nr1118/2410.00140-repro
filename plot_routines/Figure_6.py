@@ -248,8 +248,8 @@ ax[0].set_ylim(33,36)
 ax[0].set_yticks([33,33.5,34,34.5,35,35.5,36],minor =True)
 ax[0].tick_params(top=1,right=1, which='both', direction='in', labelsize=my_fontsize)
 
-ax[1].set_xlim(10, 16)
-ax[1].set_xticks([10,11,12,13,14,15,16])
+ax[1].set_xlim(9, 15)
+ax[1].set_xticks([10,11,12,13,14,15])
 ax[1].set_ylim(1., 2.7)
 ax[1].set_yticks([1.,1.4,1.8,2.2,2.7])
 
@@ -369,8 +369,8 @@ ax[0].set_ylim(33,36)
 ax[0].set_yticks([33,33.5,34,34.5,35,35.5,36],minor =True)
 ax[0].tick_params(top=1,right=1, which='both', direction='in', labelsize=my_fontsize)
 
-ax[1].set_xlim(10, 16)
-ax[1].set_xticks([10,11,12,13,14,15,16])
+ax[1].set_xlim(9, 15)
+ax[1].set_xticks([10,11,12,13,14,15])
 ax[1].set_ylim(1., 2.7)
 ax[1].set_yticks([1.,1.4,1.8,2.2,2.7])
 

@@ -157,8 +157,8 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
 
     ly_68adm = get_quantiles(MR_ADM[:,0], quantiles = [0.16,0.5,0.84])
     ly_95adm = get_quantiles(MR_ADM[:,0], quantiles = [0.025,0.5,0.975])
-    print('68% Max mass Including ADM: ',ly_68adm[2]) #upper bound only
-    print('95% Max mass Including ADM: ',ly_95adm[2])
+    print('68% Max mass Including ADM: ',ly_68adm[2] + ly_68adm[1]) #upper bound only
+    print('95% Max mass Including ADM: ',ly_95adm[2] + ly_95adm[1])
 
     if root_prior is not None:
         MR_prior = np.loadtxt(root_prior + 'MR_prpr.txt')
@@ -173,8 +173,8 @@ def mass_radius_posterior_plot(root_name_ADM,root_name_Baryonic,root_prior = Non
     
     ly_68 = get_quantiles(MR_prpr_B[:,0], quantiles = [0.16,0.5,0.84])
     ly_95 = get_quantiles(MR_prpr_B[:,0], quantiles = [0.025,0.5,0.975])
-    print('68% Max mass Neglecting ADM: ',ly_68[2])
-    print('95% Max mass Neglecting ADM: ',ly_95[2])
+    print('68% Max mass Neglecting ADM: ',ly_68[2] + ly_68[1])
+    print('95% Max mass Neglecting ADM: ',ly_95[2]+ ly_95[1])
 
     kdeb = sns.kdeplot(x = MR_prpr_B[:,1], y = MR_prpr_B[:,0], gridsize=40,bw_adjust = 1.5, 
                 fill=True, ax=ax, levels=[0.05,0.32,1.],
@@ -258,8 +258,8 @@ ax[0].set_ylim(33,36)
 ax[0].set_yticks([33,33.5,34,34.5,35,35.5,36],minor =True)
 ax[0].tick_params(top=1,right=1, which='both', direction='in', labelsize=my_fontsize)
 
-ax[1].set_xlim(10, 16)
-ax[1].set_xticks([10,11,12,13,14,15,16])
+ax[1].set_xlim(9, 15)
+ax[1].set_xticks([10,11,12,13,14,15])
 ax[1].set_ylim(1., 2.7)
 ax[1].set_yticks([1.,1.4,1.8,2.2,2.6])
 
@@ -286,49 +286,48 @@ j = 25
 k = 112
 
 
-# minpres_adm = np.log10(adm_contours_min)
-# maxpres_adm = np.log10(adm_contours_max)
+minpres_adm = np.log10(adm_contours_min)
+maxpres_adm = np.log10(adm_contours_max)
 
-# minpres_ppNI = np.log10(contours_min)
-# maxpres_ppNI = np.log10(contours_max)
+minpres_ppNI = np.log10(contours_min)
+maxpres_ppNI = np.log10(contours_max)
 
-# energydensities = minpres_adm[:,0] #could also be maxpres_adm doesn't matter which
+energydensities = minpres_adm[:,0] #could also be maxpres_adm doesn't matter which
 
-# print('energy densities evaluated: ',energydensities[j], energydensities[k])
-
-
-
-# W_ADM = maxpres_ADM[:,2][j] - minpres_ADM[:,2][j]
+print('energy densities evaluated: ',energydensities[j], energydensities[k])
 
 
-# #no ADM bands need to be recomputed for energydensities = np.logspace(14.2,16,250)!! Do Monday
 
-# W_noADM = maxpres_ppNI[:,2][j] - minpres_ppNI[:,2][j]
+W_ADM = maxpres_adm[:,2][j] - minpres_adm[:,2][j]
 
-# print('95% Confidence Including ADM: ', minpres_adm[:,2][j], maxpres_adm[:,2][j])
+
+
+W_noADM = maxpres_ppNI[:,2][j] - minpres_ppNI[:,2][j]
+
+print('95% Confidence Including ADM: ', minpres_adm[:,2][j], maxpres_adm[:,2][j])
       
-# print('95% Confidence Neglecting ADM: ', minpres_ppNI[:,2][j],maxpres_ppNI[:,2][j])
+print('95% Confidence Neglecting ADM: ', minpres_ppNI[:,2][j],maxpres_ppNI[:,2][j])
 
-# Percent_change_ADM = ((W_ADM-W_noADM)/W_noADM)*100
+Percent_change_ADM = (abs(W_ADM-W_noADM)/W_noADM)*100
 
-# print('Percent diff: ', Percent_change_ADM)
-
-
-
-# W_ADM = maxpres_ADM[:,2][k] - minpres_ADM[:,2][k]
+print('Percent diff: ', Percent_change_ADM)
 
 
-# #no ADM bands need to be recomputed for energydensities = np.logspace(14.2,16,250)!! Do Monday
 
-# W_noADM = maxpres_ppNI[:,2][k] - minpres_ppNI[:,2][k]
+W_ADM = maxpres_adm[:,2][k] - minpres_adm[:,2][k]
 
-# print('95% Confidence Including ADM: ', minpres_adm[:,2][k], maxpres_adm[:,2][k])
+
+#no ADM bands need to be recomputed for energydensities = np.logspace(14.2,16,250)!! Do Monday
+
+W_noADM = maxpres_ppNI[:,2][k] - minpres_ppNI[:,2][k]
+
+print('95% Confidence Including ADM: ', minpres_adm[:,2][k], maxpres_adm[:,2][k])
       
-# print('95% Confidence Neglecting ADM: ', minpres_ppNI[:,2][k],maxpres_ppNI[:,2][k])
+print('95% Confidence Neglecting ADM: ', minpres_ppNI[:,2][k],maxpres_ppNI[:,2][k])
 
-# Percent_change_ADM = ((W_ADM-W_noADM)/W_noADM)*100
+Percent_change_ADM = (abs(W_ADM-W_noADM)/W_noADM)*100
 
-# print('Percent diff: ', Percent_change_ADM)
+print('Percent diff: ', Percent_change_ADM)
 
 
 
