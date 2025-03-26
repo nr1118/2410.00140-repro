@@ -53,7 +53,7 @@ plots_directory = f'{parent}/plots/'
 
 
 
-def get_quantiles(array, quantiles=[0.05, 0.5, 0.95]): #0.05,0.5,0.95 0.32,0.5,0.68
+def get_quantiles(array, quantiles=[0.025, 0.5, 0.975]): #0.05,0.5,0.95 0.32,0.5,0.68
         contours = np.nanquantile(array, quantiles) #changed to nanquantile to inorder to ignore the nans that may appear
         low = contours[0]
         median = contours[1]
@@ -156,14 +156,14 @@ for i in range(len(matrixp)):
 # In[9]:
 
 
-print('Priors 68% ', get_quantiles(matrixp[:,0], quantiles = [0.32,0.5,0.68]) )
+print('Priors 68% ', get_quantiles(matrixp[:,0], quantiles = [0.16,0.5,0.84]) )
 print('Priors 95% ', get_quantiles(matrixp[:,0]) )
 
 
 # In[10]:
 
 
-print('Posteriors 68% ', get_quantiles(matrix[:,0], quantiles = [0.32,0.5,0.68]) )
+print('Posteriors 68% ', get_quantiles(matrix[:,0], quantiles = [0.16,0.5,0.84]) )
 print('Posteriors 95% ', get_quantiles(matrix[:,0]) )
 
 
