@@ -189,7 +189,7 @@ pyplot.rcParams['xtick.top'] = True
 # In[12]:
 
 
-fig,ax = pyplot.subplots(figsize = (10,11))
+fig,ax = pyplot.subplots(figsize = (10,10))
 
 plot = sns.kdeplot(x = matrix[:,0],y = matrix[:,1],fill = True,cbar = False,cmap = 'gray'
                    ,common_norm = True,levels=[0.05,0.32,1.],ax = ax)
