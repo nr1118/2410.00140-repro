@@ -219,7 +219,7 @@ ax.set_ylabel(r'$\mathrm{Mass \, [M_\odot]}$',fontsize = 28)
 ax.set_xlabel(r'$\mathrm{Radius \, [km]}$',fontsize = 28)
 
 
-fig.savefig(plots_directory + 'Ellipses_FUTUREX.pdf',bbox_inches='tight')
+fig.savefig(plots_directory + 'Ellipses_FUTUREX.png',bbox_inches='tight')
 #plt.show()
     
 

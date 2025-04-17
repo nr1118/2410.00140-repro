@@ -341,5 +341,85 @@ fig.savefig(plots_directory + plot_name + 'ratio_plot.png',bbox_inches='tight')
 
 
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+posterior_data_directory_noadm = f'{parent}/results/posterior/Future-X/No_ADM_Model/FUTUREX_NO_ADM_VARYING_BARYONIC/' if not args.repro else f'{parent}/repro/posterior/{run_nameposterior_incladm_noadm}/'
+posterior_data_directory = f'{parent}/results/posterior/Future-X/ADM_Model/FUTUREX_ADM_VARYING_BARYONIC/' if not args.repro else f'{parent}/repro/posterior/{run_nameposterior_incladm_adm}/'
+
+plots_directory = f'{parent}/plots/' 
+
+
+if args.repro:
+    ewposterior_noadm = np.loadtxt(posterior_data_directory_noadm + f'{run_nameposterior_incladm_noadm}'+'post_equal_weights.dat')
+    ewposterior = np.loadtxt(posterior_data_directory + f'{run_nameposterior_incladm_adm}'+'post_equal_weights.dat')
+
+else:
+    ewposterior_noadm = np.loadtxt(posterior_data_directory_noadm + 'FUTUREX_NO_ADM_VARYING_BARYONIC_post_equal_weights.dat')
+    ewposterior = np.loadtxt(posterior_data_directory + 'FUTUREX_ADM_VARYING_BARYONIC_post_equal_weights.dat')
+
+print('Generating the posterior ratio plot')
+
+mchi = ewposterior_noadm[:,5]
+gchi_over_mphi = ewposterior_noadm[:,6]
+Fchi = ewposterior_noadm[:,7]
+
+mchiadm = ewposterior[:,5]
+gchi_over_mphiadm = ewposterior[:,6]
+Fchiadm = ewposterior[:,7]
+
+
+mchi_prior = tmp[:,5]
+gchi_over_mphi_prior = tmp[:,6]
+Fchi_prior = tmp[:,7]
+
+
+
+
+
+    
+
+
+
+fig,ax = pyplot.subplots()
+
+# plot = sns.kdeplot(x = np.log10(gchi_over_mphiadm/mchiadm),y = Fchiadm,fill = True,cbar = False,cmap = 'gray'
+#                    ,common_norm = True,levels=[0.05,0.32,1.],ax = ax)
+
+
+
+# plot_noadm = sns.kdeplot(x=np.log10(gchi_over_mphi/mchi),y = Fchi,fill = False,cbar = False,
+#                    colors = 'xkcd:red',common_norm = True,levels =[0.05,0.32,1],label = "No ADM model", linestyles = 'dashed',
+#                         linewidths = 2.,ax = ax)
+
+# plot.figure.axes[-1].yaxis.label.set_size(24)
+# plot.figure.axes[-1].xaxis.label.set_size(24)
+# plot.figure.axes[-1].tick_params(labelsize=24)
+# ax.set_ylabel(r"F$_\chi$ [$\%$]",font = 'serif',size = 24)
+# ax.set_xlabel(r"$\log_{10}(\frac{\mathdefault{g}_\chi}{\mathdefault{m}_\phi/\mathrm{MeV}}/(\mathdefault{m}_\chi/\mathrm{MeV}))$",font = 'serif',size =24)
+# ax.tick_params(axis='both', which='major', labelsize=24)
+
+
+# ax.set_yticks([0,0.5,1.,1.5,2.])
+# ax.set_xticks([-9,-8,-7,-6,-5,-4,-3])
+# ax.set_ylim(0.0,2.)
+# ax.set_xlim(-9,-3)
+# ax.tick_params(labelsize=24)
+# ax.minorticks_on()
+
+ax.legend(handles =[mpatches.Patch(color = 'Grey',label = 'ADM core model'), 
+                    plt.lines.Line2D([],[],color = 'xkcd:red',label = 'No ADM model',linestyle = '--',lw = 2.0)],
+                 fontsize = 22,frameon = True,loc = "upper right")
+
+
+sns.histplot(np.log10(gchi_over_mphi/mchi), stat="probability",bins =40,common_norm = True,
+             kde = True,thresh = 0)
+sns.histplot(np.log10(gchi_over_mphiadm/mchiadm), stat="probability",bins =40,common_norm = True,
+             kde = True,thresh = 0)
+sns.histplot(np.log10(gchi_over_mphi_prior/mchi_prior), stat="probability",bins =40,common_norm = True,
+             kde = True,thresh = 0,color = 'gray')
+
+
+pyplot.tight_layout()
+pyplot.show()
+fig.savefig(plots_directory + 'ALL_ratio_posterior.png',bbox_inches='tight')

@@ -23,9 +23,6 @@ import sys
 current_path = os.path.dirname(__file__)
 parent = os.path.dirname(current_path)
 
-plt.rcParams['mathtext.fontset'] = 'custom'
-plt.rcParams['mathtext.rm'] = 'serif'
-plt.rcParams['font.family'] ='serif'
 
 
 # In[3]:
@@ -169,6 +166,15 @@ print('Posteriors 95% ', get_quantiles(matrix[:,0]) )
 
 # In[11]:
 
+# plt.rcParams['mathtext.fontset'] = 'custom'
+# plt.rcParams['mathtext.rm'] = 'serif'
+# plt.rcParams['font.family'] ='serif'
+
+
+plt.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+#plt.rc('text', usetex=True)
+
+
 
 pyplot.rcParams['xtick.direction'] = 'in'
 pyplot.rcParams['xtick.minor.visible'] = True
@@ -177,7 +183,7 @@ pyplot.rcParams['ytick.minor.visible'] = True
 pyplot.rcParams['xtick.major.size'] = 5
 pyplot.rcParams['ytick.major.size'] = 5
 pyplot.rcParams['ytick.right'] = True
-pyplot.rcParams['xtick.top'] = True 
+pyplot.rcParams['xtick.top'] = True
 
 
 # In[12]:

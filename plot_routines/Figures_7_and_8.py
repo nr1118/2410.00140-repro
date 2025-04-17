@@ -120,7 +120,7 @@ pyplot.savefig(plots_directory + 'MR_fixed.png')
 
 
 
-fig, ax = pyplot.subplots(1,1, figsize=(14,5))
+fig, ax = pyplot.subplots(1,1, figsize=(12,10))
 Array = np.load(data_directory + 'Relcent_diff_intermediate_stiff_baryonic.npy')
 mchi_start = 500
 mchi_end = 4500
@@ -153,14 +153,14 @@ ax.set_xticks([1000,1500,2000,2500,3000,3500,4000])
 ax.set_xlabel(r'm$_\chi \, [\mathrm{MeV}]$',fontsize=28)
 ax.tick_params(axis='both', which='major', labelsize=22)
 ax.set_title(r'Intermediately Stiff EoS',fontsize = 24)
-pyplot.savefig(plots_directory + 'Percent_diff_intermediate_stiff_plot.png')
+pyplot.savefig(plots_directory + 'Percent_diff_intermediate_stiff_plot.png', bbox_inches='tight')
 pyplot.show()
 
 
 # In[8]:
 
 
-fig, ax = pyplot.subplots(1,1, figsize=(14,5))
+fig, ax = pyplot.subplots(1,1, figsize=(12,10))
 Array = np.load(data_directory + 'Relcent_diff_intermediate_stiff_newmchistep_baryonic.npy')
 mchi_start = 500
 mchi_end = 4500
@@ -195,14 +195,14 @@ ax.set_xlabel(r'm$_\chi \, [\mathrm{MeV}]$',fontsize=28)
 ax.tick_params(axis='both', which='major', labelsize=22)
 ax.set_xticks([1000,1500,2000,2500,3000,3500,4000])
 ax.set_title(r'Intermediately Stiff EoS with $\Delta m_\chi = 100$ MeV',fontsize = 24)
-pyplot.savefig(plots_directory + 'Percent_diff_intermediate_stiff_plot_newmchistep.png')
+pyplot.savefig(plots_directory + 'Percent_diff_intermediate_stiff_plot_newmchistep.png',bbox_inches='tight')
 pyplot.show()
 
 
 # In[9]:
 
 
-fig, ax = pyplot.subplots(1,1, figsize=(14,5))
+fig, ax = pyplot.subplots(1,1, figsize=(12,10))
 Array = np.load(data_directory + 'Relcent_diff_intermediate_stiff_newfchistep_baryonic.npy')
 mchi_start = 500
 mchi_end = 4500
@@ -235,14 +235,14 @@ ax.set_xlabel(r'm$_\chi \, [\mathrm{MeV}]$',fontsize=28)
 ax.tick_params(axis='both', which='major', labelsize=22)
 ax.set_xticks([1000,1500,2000,2500,3000,3500,4000])
 ax.set_title(r'Intermediately Stiff EoS with $\Delta F_\chi = 0.05 \%$',fontsize = 24)
-pyplot.savefig(plots_directory + 'Percent_diff_intermediate_stiff_plot_newfchistep.png')
+pyplot.savefig(plots_directory + 'Percent_diff_intermediate_stiff_plot_newfchistep.png',bbox_inches='tight')
 pyplot.show()
 
 
 # In[10]:
 
 
-fig, ax = pyplot.subplots(1,1, figsize=(14,5))
+fig, ax = pyplot.subplots(1,1, figsize=(12,10))
 Array = np.load(data_directory + 'Relcent_diff_soft_baryonic.npy')
 mchi_start = 500
 mchi_end = 4500
@@ -276,14 +276,14 @@ ax.set_xlabel(r'm$_\chi \, [\mathrm{MeV}]$',fontsize=28)
 ax.tick_params(axis='both', which='major', labelsize=22)
 ax.set_xticks([1000,1500,2000,2500,3000,3500,4000])
 ax.set_title(r'Soft EoS',fontsize = 24)
-pyplot.savefig(plots_directory + 'Percent_diff_soft_plot.png')
+pyplot.savefig(plots_directory + 'Percent_diff_soft_plot.png',bbox_inches='tight')
 pyplot.show()
 
 
 # In[11]:
 
 
-fig, ax = pyplot.subplots(1,1, figsize=(14,5))
+fig, ax = pyplot.subplots(1,1, figsize=(12,10))
 Array = np.load(data_directory + 'Relcent_diff_stiff_baryonic.npy')
 mchi_start = 500
 mchi_end = 4500
@@ -316,7 +316,7 @@ ax.set_xlabel(r'm$_\chi \, [\mathrm{MeV}]$',fontsize=28)
 ax.tick_params(axis='both', which='major', labelsize=22)
 ax.set_xticks([1000,1500,2000,2500,3000,3500,4000])
 ax.set_title(r'Stiff EoS',fontsize = 24)
-pyplot.savefig(plots_directory + 'Percent_diff_stiff_plot.png')
+pyplot.savefig(plots_directory + 'Percent_diff_stiff_plot.png',bbox_inches='tight')
 pyplot.show()
 
 
