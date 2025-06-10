@@ -4,6 +4,8 @@ Reproduction package for arXiv:2410.00140https://github.com/nr1118/2410.00140-re
 
 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
 
+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
+
 
 This repository contains all scripts necessary to reproduce all results from the paper "Probing fermionic asymmetric dark matter cores using global neutron star properties" by Rutherford et al., PRD. (2025) [preprint:  https://arxiv.org/abs/2410.00140 | doi: insert doi from PRD when the time comes].
 
