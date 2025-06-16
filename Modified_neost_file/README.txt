@@ -1,4 +1,4 @@
-The file in this folder is nearly identical to the PosteriorAnalysis.py file used in NEoST v2.1.0. However, since Rutherford et al. 2024b (arXiv:2410.00140) didn't use the extra data associated with compute_auxiliarly_data() and compute_prior_auxliarly_data(), we made a minimal function that only computes the necessary files needed to generate the figures in the manuscript. This function is called compute_minimal_auxliarly_data_ADM() and compute_minimal_auxliarly_data_Baryonic().
+The file in this folder is nearly identical to the PosteriorAnalysis.py file used in NEoST v2.1.0. However, since Rutherford et al. 2024b (arXiv:2410.00140) didn't use the extra data associated with compute_auxiliary_data() and compute_prior_auxiliary_data(), we made a minimal function that only computes the necessary files needed to generate the figures in the manuscript. This function is called compute_minimal_auxiliary_data_ADM() and compute_minimal_auxiliary_data_Baryonic().
 
 Instructions to use the above functions:
 
